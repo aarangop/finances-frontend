@@ -154,6 +154,12 @@ export interface components {
             model: string;
             /** Year */
             year: number;
+            /** Odometer */
+            odometer: number;
+            /** License Plate */
+            license_plate: string;
+            /** Color */
+            color: string;
             /** Id */
             id: number;
             /**
@@ -172,6 +178,12 @@ export interface components {
             model: string;
             /** Year */
             year: number;
+            /** Odometer */
+            odometer: number;
+            /** License Plate */
+            license_plate: string;
+            /** Color */
+            color: string;
         };
     };
     responses: never;

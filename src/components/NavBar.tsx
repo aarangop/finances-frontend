@@ -1,4 +1,11 @@
-import { Box, Container, Link, Toolbar, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Link,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import NextLink from "next/link";
 import ThemeToggleSwitch from "./ThemeToggleSwitch";
@@ -17,36 +24,37 @@ export default function NavBar() {
               display: "flex",
               ml: 2,
               justifyContent: "flex-start",
+              sm: { display: "none" },
             }}
             gap={2}
           >
-            <Link href="/" component={NextLink} passHref color="inherit">
+            <Button href="/" component={NextLink} passHref color="inherit">
               Home
-            </Link>
-            <Link
+            </Button>
+            <Button
               href="/finances"
               component={NextLink}
               passHref
               color="inherit"
             >
               Finances
-            </Link>
-            <Link
+            </Button>
+            <Button
               href="/roadtrips"
               component={NextLink}
               passHref
               color="inherit"
             >
               Roadtrips
-            </Link>
-            <Link
+            </Button>
+            <Button
               href="/vehicles"
               component={NextLink}
               passHref
               color="inherit"
             >
               Vehicles
-            </Link>
+            </Button>
           </Box>
           <ThemeToggleSwitch />
         </Toolbar>
