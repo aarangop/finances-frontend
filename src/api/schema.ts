@@ -160,6 +160,8 @@ export interface components {
             license_plate: string;
             /** Color */
             color: string;
+            /** @default car */
+            type: components["schemas"]["VehicleType"];
             /** Id */
             id: number;
             /**
@@ -184,7 +186,14 @@ export interface components {
             license_plate: string;
             /** Color */
             color: string;
+            /** @default car */
+            type: components["schemas"]["VehicleType"];
         };
+        /**
+         * VehicleType
+         * @enum {string}
+         */
+        VehicleType: "car" | "motorcycle" | "truck";
     };
     responses: never;
     parameters: never;

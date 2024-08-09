@@ -12,8 +12,6 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 
-type Vehicle = components["schemas"]["Vehicle"];
-
 export default function VehiclesPage() {
   const queryClient = new QueryClient();
   queryClient.prefetchQuery({

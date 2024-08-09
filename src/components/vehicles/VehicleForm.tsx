@@ -1,6 +1,10 @@
 "use client";
 
+import client from "@/api/apiClient";
+import { getQueryClient } from "@/api/queryClient";
 import { components } from "@/api/schema";
+import DeleteIcon from "@mui/icons-material/Delete";
+import SaveIcon from "@mui/icons-material/Save";
 import {
   Button,
   Card,
@@ -8,20 +12,18 @@ import {
   CardContent,
   Dialog,
   DialogActions,
-  DialogContent,
-  DialogContentText,
   DialogTitle,
+  FormControl,
   Grid,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
 } from "@mui/material";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import SaveIcon from "@mui/icons-material/Save";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { useMutation } from "@tanstack/react-query";
-import client from "@/api/apiClient";
-import { getQueryClient } from "@/api/queryClient";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
 type Vehicle = components["schemas"]["Vehicle"];
 
@@ -35,6 +37,7 @@ export default function VehicleForm({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const handleDialogClose = () => setDeleteDialogOpen(false);
   const router = useRouter();
+  const vehicleTypes = ["car", "motorcycle", "truck"];
 
   const {
     control,
@@ -226,6 +229,29 @@ export default function VehicleForm({
                     />
                   )}
                 />
+              </Grid>
+              <Grid item md={6}>
+                <FormControl fullWidth>
+                  <InputLabel id="vehicle-type-label">Vehicle Type</InputLabel>
+                  <Controller
+                    name="type"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        labelId="vehicle-type-label"
+                        id="type"
+                        label="Vehicle Type"
+                        {...field}
+                      >
+                        {vehicleTypes.map((type) => (
+                          <MenuItem key={type} value={type}>
+                            {type.replace(/^\w/, (c) => c.toUpperCase())}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    )}
+                  />
+                </FormControl>
               </Grid>
               <Grid item md={6}>
                 <Controller
