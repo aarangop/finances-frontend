@@ -25,7 +25,13 @@ import { useRouter } from "next/navigation";
 
 type Vehicle = components["schemas"]["Vehicle"];
 
-export default function VehicleForm({ vehicle }: { vehicle: Vehicle }) {
+export default function VehicleForm({
+  vehicle,
+  newVehicle = false,
+}: {
+  vehicle: Vehicle;
+  newVehicle?: boolean;
+}) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const handleDialogClose = () => setDeleteDialogOpen(false);
   const router = useRouter();
@@ -37,13 +43,18 @@ export default function VehicleForm({ vehicle }: { vehicle: Vehicle }) {
   } = useForm<Vehicle>({
     defaultValues: vehicle,
   });
-
   const mutation = useMutation({
     mutationFn: (data: Vehicle) => {
-      return client.PUT("/vehicles/{vehicle_id}", {
-        params: { path: { vehicle_id: vehicle.id } },
-        body: data,
-      });
+      if (!newVehicle) {
+        return client.PUT("/vehicles/{vehicle_id}", {
+          params: { path: { vehicle_id: vehicle.id } },
+          body: data,
+        });
+      } else {
+        return client.POST("/vehicles/", {
+          body: data,
+        });
+      }
     },
     mutationKey: ["vehicles", vehicle.id],
     onSuccess: () => {
@@ -64,7 +75,10 @@ export default function VehicleForm({ vehicle }: { vehicle: Vehicle }) {
     },
   });
 
-  const deleteVehicle = () => {};
+  const deleteVehicle = () => {
+    deleteMutation.mutate(vehicle);
+    setDeleteDialogOpen(false);
+  };
 
   const queryClient = getQueryClient();
 
@@ -109,6 +123,7 @@ export default function VehicleForm({ vehicle }: { vehicle: Vehicle }) {
                       label="Name"
                       error={!!errors.name}
                       {...field}
+                      required
                     />
                   )}
                 />

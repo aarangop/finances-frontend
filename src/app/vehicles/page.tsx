@@ -2,8 +2,10 @@ import client from "@/api/apiClient";
 import { components } from "@/api/schema";
 import Main from "@/components/Main";
 import VehicleList from "@/components/vehicles/VehicleList";
-import { Container } from "@mui/material";
+import { Button, Container } from "@mui/material";
 import Typography from "@mui/material/Typography";
+import AddIcon from "@mui/icons-material/Add";
+import NextLink from "next/link";
 import {
   dehydrate,
   HydrationBoundary,
@@ -35,6 +37,20 @@ export default function VehiclesPage() {
       <HydrationBoundary state={dehydrate(queryClient)}>
         <VehicleList />
       </HydrationBoundary>
+      <Container>
+        <Button
+          startIcon={<AddIcon />}
+          variant="contained"
+          LinkComponent={NextLink}
+          href="/vehicles/new"
+          sx={{
+            position: "absolute",
+            bottom: "1rem",
+          }}
+        >
+          New Vehicle
+        </Button>
+      </Container>
     </Main>
   );
 }
