@@ -10,9 +10,6 @@ import {
   Card,
   CardActions,
   CardContent,
-  Dialog,
-  DialogActions,
-  DialogTitle,
   FormControl,
   Grid,
   InputLabel,
@@ -24,8 +21,9 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import DeleteVehicleDialog from "./DeleteVehicleDialog";
 
-type Vehicle = components["schemas"]["Vehicle"];
+type Vehicle = components["schemas"]["VehicleSchema"];
 
 export default function VehicleForm({
   vehicle,
@@ -38,6 +36,7 @@ export default function VehicleForm({
   const handleDialogClose = () => setDeleteDialogOpen(false);
   const router = useRouter();
   const vehicleTypes = ["car", "motorcycle", "truck"];
+  const queryClient = getQueryClient();
 
   const {
     control,
@@ -46,6 +45,7 @@ export default function VehicleForm({
   } = useForm<Vehicle>({
     defaultValues: vehicle,
   });
+
   const mutation = useMutation({
     mutationFn: (data: Vehicle) => {
       if (!newVehicle) {
@@ -66,25 +66,6 @@ export default function VehicleForm({
     },
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: (data: Vehicle) => {
-      return client.DELETE("/vehicles/{vehicle_id}", {
-        params: { path: { vehicle_id: vehicle.id } },
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["vehicles"] });
-      router.push("/vehicles");
-    },
-  });
-
-  const deleteVehicle = () => {
-    deleteMutation.mutate(vehicle);
-    setDeleteDialogOpen(false);
-  };
-
-  const queryClient = getQueryClient();
-
   const onSubmit: SubmitHandler<Vehicle> = async (data, event) => {
     event?.preventDefault();
     event?.stopPropagation();
@@ -93,23 +74,11 @@ export default function VehicleForm({
 
   return (
     <>
-      <Dialog open={deleteDialogOpen}>
-        <DialogTitle id="alert-dialog-title">
-          {"Are you sure you want to delete this vehicle?"}
-        </DialogTitle>
-        <DialogActions>
-          <Button onClick={handleDialogClose}>Cancel</Button>
-          <Button
-            onClick={deleteVehicle}
-            startIcon={<DeleteIcon />}
-            color="error"
-            variant="contained"
-            autoFocus
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <DeleteVehicleDialog
+        vehicle={vehicle}
+        open={deleteDialogOpen}
+        handleDialogClose={handleDialogClose}
+      ></DeleteVehicleDialog>
       <Card>
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent>
@@ -133,13 +102,13 @@ export default function VehicleForm({
               </Grid>
               <Grid item md={6}>
                 <Controller
-                  name="brand"
+                  name="make"
                   control={control}
                   rules={{ required: true }}
                   render={({ field }) => (
                     <TextField
-                      id="Brand"
-                      label="Brand"
+                      id="Make"
+                      label="Make"
                       sx={{ width: "100%" }}
                       required
                       {...field}
@@ -234,7 +203,7 @@ export default function VehicleForm({
                 <FormControl fullWidth>
                   <InputLabel id="vehicle-type-label">Vehicle Type</InputLabel>
                   <Controller
-                    name="type"
+                    name="vehicle_type"
                     control={control}
                     render={({ field }) => (
                       <Select

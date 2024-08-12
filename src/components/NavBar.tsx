@@ -39,13 +39,8 @@ export default function NavBar() {
             >
               Finances
             </Button>
-            <Button
-              href="/roadtrips"
-              component={NextLink}
-              passHref
-              color="inherit"
-            >
-              Roadtrips
+            <Button href="/trips" component={NextLink} passHref color="inherit">
+              Trips
             </Button>
             <Button
               href="/vehicles"
