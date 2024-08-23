@@ -9,23 +9,40 @@
     "lint": "next lint",
     "openapi-generate": "openapi-typescript http://localhost:8000/openapi.json --output src/api/schema.ts",
     "test:ts": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
     "@fontsource/roboto": "^5.0.13",
+    "@hookform/error-message": "^2.0.1",
+    "@hookform/resolvers": "^3.9.0",
     "@mui/icons-material": "^5.16.6",
     "@mui/material": "^5.16.6",
+    "@mui/x-date-pickers": "^7.12.1",
     "@tanstack/react-query": "^5.51.18",
     "@tanstack/react-table": "^8.20.1",
+    "dayjs": "^1.11.12",
     "next": "14.2.5",
     "openapi-fetch": "^0.10.5",
+    "openapi-zod-client": "^1.18.2",
     "react": "^18",
     "react-dom": "^18",
-    "react-hook-form": "^7.52.2"
+    "react-hook-form": "^7.52.2",
+    "react-intl": "^6.6.8",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^1.7.0",
+    "@storybook/addon-essentials": "^8.2.9",
+    "@storybook/addon-interactions": "^8.2.9",
+    "@storybook/addon-links": "^8.2.9",
+    "@storybook/addon-onboarding": "^8.2.9",
+    "@storybook/blocks": "^8.2.9",
+    "@storybook/nextjs": "^8.2.9",
+    "@storybook/react": "^8.2.9",
+    "@storybook/test": "^8.2.9",
     "@tanstack/react-query-devtools": "^5.51.18",
     "@testing-library/jest-dom": "^6.4.8",
     "@testing-library/react": "^16.0.0",
@@ -36,10 +53,12 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
+    "eslint-plugin-storybook": "^0.8.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "openapi-typescript": "^7.3.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "whatwg-fetch": "^3.6.20"
   }
 }

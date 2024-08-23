@@ -41,38 +41,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/trips/": {
+    "/trips/car": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Read Trips */
-        get: operations["read_trips_trips__get"];
+        /** Read Car Trips */
+        get: operations["read_car_trips_trips_car_get"];
         put?: never;
-        /** Create Trip */
-        post: operations["create_trip_trips__post"];
+        /** Create Car Trip */
+        post: operations["create_car_trip_trips_car_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/trips/{trip_id}": {
+    "/trips/car/{trip_id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Read Trip */
-        get: operations["read_trip_trips__trip_id__get"];
-        /** Update Trip */
-        put: operations["update_trip_trips__trip_id__put"];
+        /** Read Car Trip */
+        get: operations["read_car_trip_trips_car__trip_id__get"];
+        /** Update Car Trip */
+        put: operations["update_car_trip_trips_car__trip_id__put"];
         post?: never;
-        /** Delete Trip */
-        delete: operations["delete_trip_trips__trip_id__delete"];
+        /** Delete Car Trip */
+        delete: operations["delete_car_trip_trips_car__trip_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -154,6 +154,133 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** CarTripCreateSchema */
+        CarTripCreateSchema: {
+            /** Origin */
+            origin: string;
+            /** Destination */
+            destination: string;
+            /**
+             * Start Date
+             * Format: date
+             */
+            start_date: string;
+            /**
+             * End Date
+             * Format: date
+             */
+            end_date: string;
+            /** @default car */
+            mode_of_transport: components["schemas"]["ModeOfTransport"];
+            /**
+             * Round Trip
+             * @default true
+             */
+            round_trip: boolean;
+            /**
+             * International
+             * @default false
+             */
+            international: boolean;
+            /** Distance */
+            distance: number;
+            /**
+             * Expenses
+             * @default []
+             */
+            expenses: components["schemas"]["TravelExpenseSchema"][];
+            /** Odometer Start */
+            odometer_start: number;
+            /** Odometer End */
+            odometer_end: number;
+            vehicle: components["schemas"]["VehicleSchema"];
+        };
+        /** CarTripSchema */
+        "CarTripSchema-Input": {
+            /** Origin */
+            origin: string;
+            /** Destination */
+            destination: string;
+            /**
+             * Start Date
+             * Format: date
+             */
+            start_date: string;
+            /**
+             * End Date
+             * Format: date
+             */
+            end_date: string;
+            /** @default car */
+            mode_of_transport: components["schemas"]["ModeOfTransport"];
+            /**
+             * Round Trip
+             * @default true
+             */
+            round_trip: boolean;
+            /**
+             * International
+             * @default false
+             */
+            international: boolean;
+            /** Distance */
+            distance: number;
+            /**
+             * Expenses
+             * @default []
+             */
+            expenses: components["schemas"]["TravelExpenseSchema"][];
+            /** Odometer Start */
+            odometer_start: number;
+            /** Odometer End */
+            odometer_end: number;
+            vehicle: components["schemas"]["VehicleSchema"];
+            /** Id */
+            id: number;
+        };
+        /** CarTripSchema */
+        "CarTripSchema-Output": {
+            /** Origin */
+            origin: string;
+            /** Destination */
+            destination: string;
+            /**
+             * Start Date
+             * Format: date
+             */
+            start_date: string;
+            /**
+             * End Date
+             * Format: date
+             */
+            end_date: string;
+            /** @default car */
+            mode_of_transport: components["schemas"]["ModeOfTransport"];
+            /**
+             * Round Trip
+             * @default true
+             */
+            round_trip: boolean;
+            /**
+             * International
+             * @default false
+             */
+            international: boolean;
+            /** Distance */
+            distance: number;
+            /**
+             * Expenses
+             * @default []
+             */
+            expenses: components["schemas"]["TravelExpenseSchema"][];
+            /** Odometer Start */
+            odometer_start: number;
+            /** Odometer End */
+            odometer_end: number;
+            vehicle: components["schemas"]["VehicleSchema"];
+            /** Id */
+            id: number;
+        };
         /** CategoryCreateSchema */
         CategoryCreateSchema: {
             /**
@@ -239,39 +366,41 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
-        /** TripCreateSchema */
-        TripCreateSchema: {
-            /** From Location */
-            from_location: string;
-            /** To Location */
-            to_location: string;
+        /**
+         * ModeOfTransport
+         * @constant
+         * @enum {string}
+         */
+        ModeOfTransport: "car";
+        /** TravelExpenseSchema */
+        TravelExpenseSchema: {
             /**
-             * Start Date
-             * Format: date
+             * Description
+             * @description A brief description of the expense
              */
-            start_date: string;
+            description: string;
             /**
-             * End Date
-             * Format: date
+             * Amount
+             * @description The amount of money spent
              */
-            end_date: string;
-        };
-        /** TripSchema */
-        TripSchema: {
-            /** From Location */
-            from_location: string;
-            /** To Location */
-            to_location: string;
+            amount: number;
             /**
-             * Start Date
-             * Format: date
+             * Currency
+             * @description The currency of the expense
+             * @default COP
              */
-            start_date: string;
+            currency: string;
             /**
-             * End Date
-             * Format: date
+             * Exchange Rate
+             * @description The exchange rate of the currency to the base currency
+             * @default 1
              */
-            end_date: string;
+            exchange_rate: number;
+            /**
+             * Categories
+             * @description A list of category IDs associated with the expense
+             */
+            categories: components["schemas"]["CategorySchema"][] | null;
             /** Id */
             id: number;
         };
@@ -498,7 +627,7 @@ export interface operations {
             };
         };
     };
-    read_trips_trips__get: {
+    read_car_trips_trips_car_get: {
         parameters: {
             query?: {
                 skip?: number;
@@ -516,7 +645,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TripSchema"][];
+                    "application/json": components["schemas"]["CarTripSchema-Output"][];
                 };
             };
             /** @description Validation Error */
@@ -530,7 +659,7 @@ export interface operations {
             };
         };
     };
-    create_trip_trips__post: {
+    create_car_trip_trips_car_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -539,7 +668,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["TripCreateSchema"];
+                "application/json": components["schemas"]["CarTripCreateSchema"];
             };
         };
         responses: {
@@ -549,7 +678,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TripSchema"];
+                    "application/json": components["schemas"]["CarTripSchema-Output"];
                 };
             };
             /** @description Validation Error */
@@ -563,7 +692,7 @@ export interface operations {
             };
         };
     };
-    read_trip_trips__trip_id__get: {
+    read_car_trip_trips_car__trip_id__get: {
         parameters: {
             query?: never;
             header?: never;
@@ -580,7 +709,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TripSchema"];
+                    "application/json": components["schemas"]["CarTripSchema-Output"];
                 };
             };
             /** @description Validation Error */
@@ -594,7 +723,7 @@ export interface operations {
             };
         };
     };
-    update_trip_trips__trip_id__put: {
+    update_car_trip_trips_car__trip_id__put: {
         parameters: {
             query?: never;
             header?: never;
@@ -605,7 +734,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["TripCreateSchema"];
+                "application/json": components["schemas"]["CarTripSchema-Input"];
             };
         };
         responses: {
@@ -615,7 +744,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TripSchema"];
+                    "application/json": components["schemas"]["CarTripSchema-Output"];
                 };
             };
             /** @description Validation Error */
@@ -629,7 +758,7 @@ export interface operations {
             };
         };
     };
-    delete_trip_trips__trip_id__delete: {
+    delete_car_trip_trips_car__trip_id__delete: {
         parameters: {
             query?: never;
             header?: never;

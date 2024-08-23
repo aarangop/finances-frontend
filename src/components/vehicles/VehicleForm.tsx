@@ -18,23 +18,24 @@ import {
   TextField,
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import DeleteVehicleDialog from "./DeleteVehicleDialog";
 
 type Vehicle = components["schemas"]["VehicleSchema"];
 
+interface VehicleFormProps {
+  vehicle: Vehicle;
+  newVehicle?: boolean;
+  onSuccess?: (vehicle: Vehicle) => void;
+}
 export default function VehicleForm({
   vehicle,
   newVehicle = false,
-}: {
-  vehicle: Vehicle;
-  newVehicle?: boolean;
-}) {
+  onSuccess = () => {},
+}: VehicleFormProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const handleDialogClose = () => setDeleteDialogOpen(false);
-  const router = useRouter();
   const vehicleTypes = ["car", "motorcycle", "truck"];
   const queryClient = getQueryClient();
 
@@ -60,9 +61,10 @@ export default function VehicleForm({
       }
     },
     mutationKey: ["vehicles", vehicle.id],
-    onSuccess: () => {
+    onSuccess: async ({ response }) => {
+      const data = (await response.json()) as Vehicle;
       queryClient.invalidateQueries({ queryKey: ["vehicles"] });
-      router.push("/vehicles");
+      onSuccess(data);
     },
   });
 

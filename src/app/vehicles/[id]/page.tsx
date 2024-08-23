@@ -1,7 +1,6 @@
 "use client";
 
 import client from "@/api/apiClient";
-import { components } from "@/api/schema";
 import Main from "@/components/Main";
 import VehicleForm from "@/components/vehicles/VehicleForm";
 import { ExpandLessRounded, ExpandMoreRounded } from "@mui/icons-material";

@@ -7,6 +7,7 @@ import {
   CardActions,
   CardContent,
   CardHeader,
+  Chip,
   Grid,
   IconButton,
   Tooltip,
@@ -15,17 +16,17 @@ import {
 } from "@mui/material";
 import NextLink from "next/link";
 
-import { QueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
+import { QueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import DeleteVehicleDialog from "./DeleteVehicleDialog";
-import DeleteIcon from "@mui/icons-material/Delete";
 
 import client from "@/api/apiClient";
 import type { components } from "@/api/schema";
 
-type Vehicle = components["schemas"]["Vehicle"];
+type Vehicle = components["schemas"]["VehicleSchema"];
 
 export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
   const theme = useTheme();
@@ -59,18 +60,18 @@ export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
               <Typography variant="h6" sx={{ flexGrow: 1 }}>
                 {vehicle.name}
               </Typography>
-              {vehicle.type === "car" && (
-                <Tooltip title={vehicle.type.toLocaleUpperCase()}>
+              {vehicle.vehicle_type.toLowerCase() === "car" && (
+                <Tooltip title={vehicle.vehicle_type.toLocaleUpperCase()}>
                   <DirectionsCarIcon sx={{ fontSize: "large" }} />
                 </Tooltip>
               )}
-              {vehicle.type === "motorcycle" && (
-                <Tooltip title={vehicle.type.toLocaleUpperCase()}>
+              {vehicle.vehicle_type.toLowerCase() === "motorcycle" && (
+                <Tooltip title={vehicle.vehicle_type.toLocaleUpperCase()}>
                   <TwoWheelerIcon sx={{ fontSize: "large" }} />
                 </Tooltip>
               )}
-              {vehicle.type === "truck" && (
-                <Tooltip title={vehicle.type.toLocaleUpperCase()}>
+              {vehicle.vehicle_type.toLowerCase() === "truck" && (
+                <Tooltip title={vehicle.vehicle_type.toLocaleUpperCase()}>
                   <Typography variant="body2">Truck</Typography>
                 </Tooltip>
               )}
@@ -83,7 +84,7 @@ export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
                 sx={{ flexGrow: 1 }}
                 color={theme.palette.grey[600]}
               >
-                {`${vehicle.brand} ${vehicle.model} ${vehicle.year}`}
+                {`${vehicle.make} ${vehicle.model} ${vehicle.year}`}
               </Typography>
             </Box>
           }
@@ -105,12 +106,14 @@ export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
                 <Typography variant="body2" color={theme.palette.grey[600]}>
                   Color
                 </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{ fontFamily: "monospace", transform: "uppercase" }}
-                >
-                  {vehicle.color.toUpperCase()}
-                </Typography>
+                <Box display="flex" flexDirection="row">
+                  <Chip
+                    label={vehicle.color?.toUpperCase()}
+                    size="small"
+                    variant={vehicle.color ? "filled" : "outlined"}
+                    sx={{ fontFamily: "monospace", transform: "uppercase" }}
+                  />
+                </Box>
               </Box>
             </Grid>
             <Grid item sm={12} md={6}>

@@ -1,16 +1,15 @@
 import client from "@/api/apiClient";
-import { components } from "@/api/schema";
 import Main from "@/components/Main";
 import VehicleList from "@/components/vehicles/VehicleList";
+import AddIcon from "@mui/icons-material/Add";
 import { Button, Container } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import AddIcon from "@mui/icons-material/Add";
-import NextLink from "next/link";
 import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
+import NextLink from "next/link";
 
 export default function VehiclesPage() {
   const queryClient = new QueryClient();

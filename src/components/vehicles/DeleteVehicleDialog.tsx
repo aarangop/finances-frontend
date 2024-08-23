@@ -1,12 +1,13 @@
 import client from "@/api/apiClient";
 import { getQueryClient } from "@/api/queryClient";
 import { components } from "@/api/schema";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import DeleteIcon from "@mui/icons-material/Delete";
 
-type Vehicle = components["schemas"]["Vehicle"];
+type Vehicle = components["schemas"]["VehicleSchema"];
+
 export default function DeleteVehicleDialog({
   vehicle,
   open = false,

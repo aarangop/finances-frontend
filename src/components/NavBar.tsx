@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  Container,
-  Link,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Container, Toolbar, Typography } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import NextLink from "next/link";
 import ThemeToggleSwitch from "./ThemeToggleSwitch";

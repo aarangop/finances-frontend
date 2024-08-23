@@ -1,2 +1,2 @@
 import "@testing-library/jest-dom";
-console.log("Setting up jest");
+import "whatwg-fetch";

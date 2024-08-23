@@ -1,19 +1,23 @@
-import { render, screen } from "@testing-library/react";
-import VehicleForm from "@/components/vehicles/VehicleForm";
 import { components } from "@/api/schema";
+import VehicleForm from "@/components/vehicles/VehicleForm";
+import { render } from "@/testUtils";
+import { screen } from "@testing-library/react";
+import Providers from "../providers/Providers";
 
-type Vehicle = components["schemas"]["Vehicle"];
+type Vehicle = components["schemas"]["VehicleSchema"];
+
+const mockVehicle: Vehicle = {
+  id: 1,
+  name: "Test Vehicle",
+  make: "Test Brand",
+  model: "Test Model",
+  year: 2022,
+  odometer: 95000,
+  license_plate: "",
+  vehicle_type: "car",
+};
 
 describe("VehicleForm", () => {
-  const mockVehicle: Vehicle = {
-    id: 1,
-    name: "Test Vehicle",
-    brand: "Test Brand",
-    model: "Test Model",
-    year: 2022,
-    trips: [],
-  };
-
   it("renders the form and all fields correctly", () => {
     render(<VehicleForm vehicle={mockVehicle} />);
 
@@ -24,11 +28,15 @@ describe("VehicleForm", () => {
   });
 
   it("renders the brand field correctly", () => {
-    render(<VehicleForm vehicle={mockVehicle} />);
+    render(
+      <Providers>
+        <VehicleForm vehicle={mockVehicle} />
+      </Providers>
+    );
     // Check if the "Brand" field is rendered with the correct label and value
-    const brandField = screen.getByLabelText(/brand/i) as HTMLInputElement;
+    const brandField = screen.getByLabelText(/make/i) as HTMLInputElement;
     expect(brandField).toBeInTheDocument();
-    expect(brandField.value).toBe(mockVehicle.brand);
+    expect(brandField.value).toBe(mockVehicle.make);
   });
 
   it("Renders the model field correctly", () => {

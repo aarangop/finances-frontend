@@ -2,8 +2,11 @@
 
 import { getQueryClient } from "@/api/queryClient";
 import { createTheme, PaletteMode, ThemeProvider } from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import "dayjs/locale/es";
 import { ReactNode, useMemo, useState } from "react";
 import { ThemeContext, useThemeContext } from "../Context";
 
@@ -45,7 +48,11 @@ function UnthemedProviders({ children }: { children: ReactNode }) {
 export default function Providers({ children }: { children: ReactNode }) {
   return (
     <ThemeProviderWrapper>
-      <UnthemedProviders>{children}</UnthemedProviders>
+      <UnthemedProviders>
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+          {children}
+        </LocalizationProvider>
+      </UnthemedProviders>
     </ThemeProviderWrapper>
   );
 }
