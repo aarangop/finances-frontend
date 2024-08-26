@@ -1,38 +1,107 @@
 "use client";
 
+import client from "@/api/apiClient";
 import { components } from "@/api/schema";
+import VehicleAutocomplete from "@/components/vehicles/VehicleAutocomplete";
+import { ErrorMessage } from "@hookform/error-message";
 import {
   Box,
   Button,
   Card,
   CardActions,
   CardContent,
+  Checkbox,
   FormControl,
+  FormControlLabel,
   Grid,
   TextField,
   Typography,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
+import { useMutation } from "@tanstack/react-query";
+import dayjs from "dayjs";
+import { useRouter } from "next/navigation";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
 type CarTrip = components["schemas"]["CarTripSchema-Input"];
+type Vehicle = components["schemas"]["VehicleSchema"];
 
 interface CarTripFormProps {
   trip?: CarTrip | null;
 }
+
 export default function CarTripForm({ trip }: CarTripFormProps) {
   const {
     control,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<CarTrip>();
-  const onSubmit: SubmitHandler<CarTrip> = (data: CarTrip) => {};
+
+  const createTripMutation = useMutation({
+    mutationKey: ["trips", "car"],
+    mutationFn: (trip: CarTrip) => client.POST("/trips/car", { body: trip }),
+    onSuccess: (response) => {
+      if (response.data?.id) {
+        router.push(`/trips/car/${response.data?.id}`);
+        return;
+      }
+    },
+  });
+
+  const updateTripMutation = useMutation({
+    mutationKey: ["trips", "car"],
+    mutationFn: (trip: CarTrip) =>
+      client.PUT("/trips/car/{trip_id}", {
+        params: { path: { trip_id: trip.id } },
+        body: trip,
+      }),
+  });
+
+  const router = useRouter();
+
+  const onSubmit: SubmitHandler<CarTrip> = (data: CarTrip) => {
+    console.log(data);
+    if (trip === null) {
+      // Create new trip
+      createTripMutation.mutate(data);
+    } else {
+      // Update existing trip
+      updateTripMutation.mutate(data);
+    }
+  };
+
+  const [startDate, odometerStart, odometerEnd, vehicle] = watch([
+    "start_date",
+    "odometer_start",
+    "odometer_end",
+    "vehicle",
+  ]);
+
+  const handleVehicleSelect = (vehicle: Vehicle) => {
+    setValue("odometer_start", vehicle.odometer);
+    setValue("odometer_end", vehicle.odometer + 100);
+    handleOdometerChange();
+  };
+
+  const handleOdometerChange = () => {
+    console.log("Odometer change", odometerStart, odometerEnd);
+    if (odometerStart && odometerEnd && odometerEnd >= odometerStart) {
+      setValue("distance", odometerEnd - odometerStart);
+    } else {
+      setValue("distance", 0);
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} noValidate>
       <Card>
         <CardContent>
           <Typography variant="h6" mb="1rem">
-            Car Trip
+            {trip
+              ? `Edit car trip from ${trip.origin} to ${trip.destination}`
+              : "New Car Trip"}
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
@@ -54,6 +123,7 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
                   render={({ field }) => (
                     <TextField
                       {...field}
+                      required
                       label="Origin"
                       error={!!errors.origin}
                       helperText={errors.origin?.message}
@@ -67,44 +137,235 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
                 <Controller
                   control={control}
                   defaultValue={""}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: "Destination is required",
+                    },
+                  }}
                   name="destination"
                   render={({ field }) => (
                     <TextField
                       {...field}
                       label="Destination"
+                      required
                       error={!!errors.destination}
-                      helperText={errors.origin?.message}
+                      helperText={errors.destination?.message}
                     />
                   )}
                 />
               </FormControl>
             </Grid>
-            <Grid item xs={12} md={6}>
-              <Box
-                display="flex"
-                flexDirection="row"
-                width="100%"
-                gap={1}
-                alignItems="center"
-              >
-                <Controller
-                  control={control}
-                  name="start_date"
-                  render={({ field }) => (
-                    <DatePicker sx={{ flexGrow: 1 }} {...field} label="Start" />
-                  )}
-                />{" "}
-                <span>
-                  <Typography variant="body1">-</Typography>
-                </span>
-                <Controller
-                  control={control}
-                  name="end_date"
-                  render={({ field }) => (
-                    <DatePicker sx={{ flexGrow: 1 }} {...field} label="End" />
-                  )}
-                />{" "}
+            <Grid item xs={12}>
+              <Box display="flex" flexDirection="column">
+                <Box
+                  display="flex"
+                  flexDirection="row"
+                  width="100%"
+                  gap={1}
+                  alignItems="center"
+                >
+                  <Controller
+                    control={control}
+                    name="start_date"
+                    rules={{
+                      required: {
+                        value: true,
+                        message: "Start date is required",
+                      },
+                    }}
+                    render={({ field }) => (
+                      <DatePicker
+                        sx={{ flexGrow: 1 }}
+                        {...field}
+                        value={field.value ? dayjs(field.value) : dayjs()}
+                        onChange={(date) =>
+                          field.onChange(date?.format("YYYY-MM-DD"))
+                        }
+                        label="Start *"
+                      />
+                    )}
+                  />{" "}
+                  <span>
+                    <Typography variant="body1">-</Typography>
+                  </span>
+                  <Controller
+                    control={control}
+                    name="end_date"
+                    rules={{
+                      required: {
+                        value: true,
+                        message: "End date is required",
+                      },
+                      validate: (value) =>
+                        startDate && value >= startDate
+                          ? true
+                          : "End date must be after start date",
+                    }}
+                    render={({ field }) => (
+                      <DatePicker
+                        {...field}
+                        sx={{ flexGrow: 1 }}
+                        minDate={dayjs(startDate)}
+                        disabled={!startDate}
+                        value={
+                          field.value
+                            ? dayjs(field.value)
+                            : dayjs().add(2, "day")
+                        }
+                        onChange={(date) =>
+                          field.onChange(date?.format("YYYY-MM-DD"))
+                        }
+                        label="End *"
+                      />
+                    )}
+                  />{" "}
+                </Box>
+                <Box
+                  display="flex"
+                  flexDirection="row"
+                  width="100%"
+                  justifyContent="space-between"
+                  gap={1}
+                >
+                  <ErrorMessage
+                    errors={errors}
+                    name="start_date"
+                    render={({ message }) => (
+                      <Typography
+                        variant="body2"
+                        color="error"
+                        fontSize={12}
+                        sx={{ ml: "1rem", mt: "0.25rem" }}
+                      >
+                        {message}
+                      </Typography>
+                    )}
+                  />
+                  <Typography sx={{ visibility: "hidden" }}>-</Typography>
+                  <ErrorMessage
+                    errors={errors}
+                    name="end_date"
+                    render={({ message }) => (
+                      <Typography
+                        variant="body2"
+                        color="error"
+                        fontSize={12}
+                        sx={{ mr: "1rem", mt: "0.25rem" }}
+                      >
+                        {message}
+                      </Typography>
+                    )}
+                  />
+                </Box>
               </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <Controller
+                control={control}
+                rules={{
+                  required: { value: true, message: "Please select a vehicle" },
+                }}
+                name="vehicle"
+                render={({ field }) => (
+                  <VehicleAutocomplete<CarTrip>
+                    field={field}
+                    onVehicleSelect={handleVehicleSelect}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Controller
+                name="odometer_start"
+                control={control}
+                rules={{ required: true, min: 0 }}
+                defaultValue={0}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e.target.value);
+                      handleOdometerChange();
+                    }}
+                    fullWidth
+                    label="Odometer Start *"
+                    type="number"
+                    error={Boolean(errors.odometer_start)}
+                    helperText={errors.odometer_start?.message}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Controller
+                name="odometer_end"
+                control={control}
+                defaultValue={0}
+                rules={{
+                  required: true,
+                  min: 0,
+                  validate: (value) =>
+                    value >= odometerStart
+                      ? true
+                      : "End odometer must be greater than start odometer",
+                }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e.target.value);
+                      handleOdometerChange();
+                    }}
+                    fullWidth
+                    label="Odometer End *"
+                    type="number"
+                    helperText={errors.odometer_end?.message}
+                    error={!!errors.odometer_end}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              visibility={odometerStart && odometerEnd ? "visible" : "hidden"}
+            >
+              <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
+                <Typography variant="body1" sx={{ mr: "1rem" }}>
+                  Distance Traveled:
+                </Typography>
+                <Typography variant="body1" fontFamily="monospace">
+                  {odometerEnd - odometerStart} km
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={6} md={3}>
+              <Controller
+                name="round_trip"
+                control={control}
+                rules={{ required: true }}
+                defaultValue={true}
+                render={({ field }) => (
+                  <FormControlLabel
+                    control={<Checkbox {...field} />}
+                    label="Round Trip"
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={6} md={3}>
+              <Controller
+                name="international"
+                control={control}
+                defaultValue={false}
+                render={({ field }) => (
+                  <FormControlLabel
+                    control={<Checkbox {...field} />}
+                    label="International"
+                  />
+                )}
+              />
             </Grid>
           </Grid>
         </CardContent>

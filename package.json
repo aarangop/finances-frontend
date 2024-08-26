@@ -24,7 +24,7 @@
     "@tanstack/react-query": "^5.51.18",
     "@tanstack/react-table": "^8.20.1",
     "dayjs": "^1.11.12",
-    "next": "14.2.5",
+    "next": "^14.2.6",
     "openapi-fetch": "^0.10.5",
     "openapi-zod-client": "^1.18.2",
     "react": "^18",
