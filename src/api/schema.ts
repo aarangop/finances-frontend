@@ -41,6 +41,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/trips/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Trips */
+        get: operations["read_trips_trips__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/trips/car": {
         parameters: {
             query?: never;
@@ -150,10 +167,137 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/accounts/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Accounts */
+        get: operations["get_accounts_accounts__get"];
+        put?: never;
+        /** Create Account */
+        post: operations["create_account_accounts__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/accounts/{account_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Account */
+        get: operations["get_account_accounts__account_id__get"];
+        /** Update Account */
+        put: operations["update_account_accounts__account_id__put"];
+        post?: never;
+        /** Delete Account */
+        delete: operations["delete_account_accounts__account_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/accounts/{account_id}/balance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update Balance */
+        put: operations["update_balance_accounts__account_id__balance_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/accounts/{account_id}/expenses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Account Expenses */
+        get: operations["get_account_expenses_accounts__account_id__expenses_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AccountBaseSchema */
+        AccountBaseSchema: {
+            /** Bank */
+            bank: string;
+            /** Holder */
+            holder: string;
+            /** Balance */
+            balance: number;
+            /** @default COP */
+            currency: components["schemas"]["app__models__currency__Currency__2"];
+            /** Number */
+            number: string;
+            /**
+             * Expenses
+             * @default []
+             */
+            expenses: components["schemas"]["ExpenseSchema"][];
+        };
+        /** AccountCreateSchema */
+        AccountCreateSchema: {
+            /** Bank */
+            bank: string;
+            /** Holder */
+            holder: string;
+            /** Balance */
+            balance: number;
+            /** @default COP */
+            currency: components["schemas"]["app__models__currency__Currency__2"];
+            /** Number */
+            number: string;
+            /**
+             * Expenses
+             * @default []
+             */
+            expenses: components["schemas"]["ExpenseSchema"][];
+        };
+        /** AccountSchema */
+        AccountSchema: {
+            /** Bank */
+            bank: string;
+            /** Holder */
+            holder: string;
+            /** Balance */
+            balance: number;
+            /** @default COP */
+            currency: components["schemas"]["app__models__currency__Currency__2"];
+            /** Number */
+            number: string;
+            /**
+             * Expenses
+             * @default []
+             */
+            expenses: components["schemas"]["ExpenseSchema"][];
+            /** Id */
+            id: number;
+        };
         /** CarTripCreateSchema */
         CarTripCreateSchema: {
             /** Origin */
@@ -315,8 +459,9 @@ export interface components {
              * Currency
              * @description The currency of the expense
              * @default COP
+             * @enum {string}
              */
-            currency: string;
+            currency: "COP" | "USD" | "EUR";
             /**
              * Exchange Rate
              * @description The exchange rate of the currency to the base currency
@@ -327,7 +472,12 @@ export interface components {
              * Categories
              * @description A list of category IDs associated with the expense
              */
-            categories: components["schemas"]["CategorySchema"][] | null;
+            categories?: components["schemas"]["CategorySchema"][] | null;
+            /**
+             * Account Id
+             * @description Account ID associated with the expense
+             */
+            account_id?: number | null;
         };
         /** ExpenseSchema */
         ExpenseSchema: {
@@ -345,8 +495,9 @@ export interface components {
              * Currency
              * @description The currency of the expense
              * @default COP
+             * @enum {string}
              */
-            currency: string;
+            currency: "COP" | "USD" | "EUR";
             /**
              * Exchange Rate
              * @description The exchange rate of the currency to the base currency
@@ -355,9 +506,14 @@ export interface components {
             exchange_rate: number;
             /**
              * Categories
-             * @default []
+             * @description A list of category IDs associated with the expense
              */
-            categories: components["schemas"]["CategorySchema"][];
+            categories?: components["schemas"]["CategorySchema"][] | null;
+            /**
+             * Account Id
+             * @description Account ID associated with the expense
+             */
+            account_id?: number | null;
             /** Id */
             id: number;
         };
@@ -388,8 +544,9 @@ export interface components {
              * Currency
              * @description The currency of the expense
              * @default COP
+             * @enum {string}
              */
-            currency: string;
+            currency: "COP" | "USD" | "EUR";
             /**
              * Exchange Rate
              * @description The exchange rate of the currency to the base currency
@@ -400,9 +557,57 @@ export interface components {
              * Categories
              * @description A list of category IDs associated with the expense
              */
-            categories: components["schemas"]["CategorySchema"][] | null;
+            categories?: components["schemas"]["CategorySchema"][] | null;
+            /**
+             * Account Id
+             * @description Account ID associated with the expense
+             */
+            account_id?: number | null;
             /** Id */
             id: number;
+        };
+        /** TripSchema */
+        TripSchema: {
+            /** Origin */
+            origin: string;
+            /** Destination */
+            destination: string;
+            /**
+             * Start Date
+             * Format: date
+             */
+            start_date: string;
+            /**
+             * End Date
+             * Format: date
+             */
+            end_date: string;
+            /** @default car */
+            mode_of_transport: components["schemas"]["ModeOfTransport"];
+            /**
+             * Round Trip
+             * @default true
+             */
+            round_trip: boolean;
+            /**
+             * International
+             * @default false
+             */
+            international: boolean;
+            /** Distance */
+            distance: number;
+            /**
+             * Expenses
+             * @default []
+             */
+            expenses: components["schemas"]["TravelExpenseSchema"][];
+            /** Id */
+            id: number;
+        };
+        /** UpdateBalanceSchema */
+        UpdateBalanceSchema: {
+            /** Amount */
+            amount: number;
         };
         /** ValidationError */
         ValidationError: {
@@ -458,6 +663,17 @@ export interface components {
          * @enum {string}
          */
         VehicleType: "car" | "motorcycle" | "truck";
+        /**
+         * Currency
+         * @default COP
+         * @enum {string}
+         */
+        app__models__currency__Currency__1: "COP" | "USD" | "EUR";
+        /**
+         * Currency
+         * @enum {string}
+         */
+        app__models__currency__Currency__2: "COP" | "USD" | "EUR";
     };
     responses: never;
     parameters: never;
@@ -615,6 +831,38 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_trips_trips__get: {
+        parameters: {
+            query?: {
+                skip?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TripSchema"][];
+                };
             };
             /** @description Validation Error */
             422: {
@@ -1017,6 +1265,234 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_accounts_accounts__get: {
+        parameters: {
+            query?: {
+                offset?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountSchema"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_account_accounts__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AccountCreateSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_account_accounts__account_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_account_accounts__account_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AccountBaseSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_account_accounts__account_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_balance_accounts__account_id__balance_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateBalanceSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_account_expenses_accounts__account_id__expenses_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExpenseSchema"][];
                 };
             };
             /** @description Validation Error */

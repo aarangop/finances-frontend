@@ -1,12 +1,14 @@
 "use client";
 import client from "@/api/apiClient";
+import Main from "@/components/Main";
+import CarTripForm from "@/components/trips/car/CarTripForm";
+import { CircularProgress, Container } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 
 export default function CarTripPage({ params }: { params: { id: number } }) {
   const {
     data: trip,
-    status,
-    isError,
+    isSuccess,
     isPending,
   } = useQuery({
     queryKey: ["trips", params.id],
@@ -17,11 +19,11 @@ export default function CarTripPage({ params }: { params: { id: number } }) {
   });
 
   return (
-    <div>
-      <h1>Car Trip</h1>
-      {status === "pending" && <p>Loading...</p>}
-      {status === "error" && <p>Error loading trip data</p>}
-      {status === "success" && <p>{JSON.stringify(trip)}</p>}
-    </div>
+    <Main>
+      <Container>
+        {isPending && <CircularProgress />}
+        {isSuccess && trip?.data && <CarTripForm trip={trip?.data} />}
+      </Container>
+    </Main>
   );
 }

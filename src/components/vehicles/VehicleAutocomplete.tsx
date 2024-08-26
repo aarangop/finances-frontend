@@ -33,6 +33,7 @@ export default function VehicleAutocomplete<T extends FieldValues>({
       getOptionLabel={(vehicle) =>
         `${vehicle.name} - ${vehicle.make} ${vehicle.model} ${vehicle.year}`
       }
+      isOptionEqualToValue={(option, value) => option.id === value.id}
       multiple={false}
       onChange={(_, value) => {
         field.onChange(value);

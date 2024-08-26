@@ -10,6 +10,7 @@ import {
   Card,
   CardActions,
   CardContent,
+  CardHeader,
   Checkbox,
   FormControl,
   FormControlLabel,
@@ -21,9 +22,10 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { useMutation } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
-type CarTrip = components["schemas"]["CarTripSchema-Input"];
+type CarTrip = components["schemas"]["CarTripSchema-Output"];
 type Vehicle = components["schemas"]["VehicleSchema"];
 
 interface CarTripFormProps {
@@ -37,7 +39,11 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
     watch,
     setValue,
     formState: { errors },
-  } = useForm<CarTrip>();
+  } = useForm<CarTrip>({ defaultValues: trip ?? undefined });
+
+  useEffect(() => {
+    console.log(trip);
+  }, [trip]);
 
   const createTripMutation = useMutation({
     mutationKey: ["trips", "car"],
@@ -52,11 +58,13 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
 
   const updateTripMutation = useMutation({
     mutationKey: ["trips", "car"],
-    mutationFn: (trip: CarTrip) =>
-      client.PUT("/trips/car/{trip_id}", {
+    mutationFn: (trip: CarTrip) => {
+      console.log(trip.id);
+      return client.PUT("/trips/car/{trip_id}", {
         params: { path: { trip_id: trip.id } },
         body: trip,
-      }),
+      });
+    },
   });
 
   const router = useRouter();
@@ -86,7 +94,6 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
   };
 
   const handleOdometerChange = () => {
-    console.log("Odometer change", odometerStart, odometerEnd);
     if (odometerStart && odometerEnd && odometerEnd >= odometerStart) {
       setValue("distance", odometerEnd - odometerStart);
     } else {
@@ -97,18 +104,20 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
       <Card>
-        <CardContent>
-          <Typography variant="h6" mb="1rem">
-            {trip
+        <CardHeader
+          title={
+            trip
               ? `Edit car trip from ${trip.origin} to ${trip.destination}`
-              : "New Car Trip"}
-          </Typography>
+              : "New Car Trip"
+          }
+        />
+        <CardContent>
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
               <FormControl fullWidth>
                 <Controller
                   control={control}
-                  defaultValue={""}
+                  defaultValue={trip?.origin || ""}
                   rules={{
                     required: {
                       value: true,
@@ -136,7 +145,7 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
               <FormControl fullWidth>
                 <Controller
                   control={control}
-                  defaultValue={""}
+                  defaultValue={trip?.destination || ""}
                   rules={{
                     required: {
                       value: true,
@@ -168,6 +177,9 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
                   <Controller
                     control={control}
                     name="start_date"
+                    defaultValue={
+                      trip?.start_date || dayjs().format("YYYY-MM-DD")
+                    }
                     rules={{
                       required: {
                         value: true,
@@ -192,6 +204,7 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
                   <Controller
                     control={control}
                     name="end_date"
+                    defaultValue={trip?.end_date || ""}
                     rules={{
                       required: {
                         value: true,
@@ -207,7 +220,7 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
                         {...field}
                         sx={{ flexGrow: 1 }}
                         minDate={dayjs(startDate)}
-                        disabled={!startDate}
+                        disabled={!startDate && !trip?.start_date}
                         value={
                           field.value
                             ? dayjs(field.value)
@@ -263,6 +276,7 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
             <Grid item xs={12}>
               <Controller
                 control={control}
+                defaultValue={trip?.vehicle || undefined}
                 rules={{
                   required: { value: true, message: "Please select a vehicle" },
                 }}
@@ -280,7 +294,7 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
                 name="odometer_start"
                 control={control}
                 rules={{ required: true, min: 0 }}
-                defaultValue={0}
+                defaultValue={trip?.odometer_start || 0}
                 render={({ field }) => (
                   <TextField
                     {...field}
@@ -301,7 +315,7 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
               <Controller
                 name="odometer_end"
                 control={control}
-                defaultValue={0}
+                defaultValue={trip?.odometer_end || 0}
                 rules={{
                   required: true,
                   min: 0,
@@ -329,7 +343,13 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
             <Grid
               item
               xs={12}
-              visibility={odometerStart && odometerEnd ? "visible" : "hidden"}
+              visibility={
+                (odometerStart || trip?.odometer_start) &&
+                odometerEnd &&
+                trip?.odometer_end
+                  ? "visible"
+                  : "hidden"
+              }
             >
               <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
                 <Typography variant="body1" sx={{ mr: "1rem" }}>
@@ -344,12 +364,13 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
               <Controller
                 name="round_trip"
                 control={control}
+                defaultValue={trip?.round_trip ?? true}
                 rules={{ required: true }}
-                defaultValue={true}
                 render={({ field }) => (
                   <FormControlLabel
                     control={<Checkbox {...field} />}
                     label="Round Trip"
+                    checked={field.value}
                   />
                 )}
               />
@@ -358,11 +379,12 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
               <Controller
                 name="international"
                 control={control}
-                defaultValue={false}
+                defaultValue={trip?.international ?? false}
                 render={({ field }) => (
                   <FormControlLabel
                     control={<Checkbox {...field} />}
                     label="International"
+                    checked={field.value}
                   />
                 )}
               />
