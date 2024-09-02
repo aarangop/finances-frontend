@@ -3,15 +3,14 @@
 import client from "@/api/apiClient";
 import { components } from "@/api/schema";
 import Main from "@/components/Main";
+import NewTripButton from "@/components/trips/NewTripButton";
 import { DirectionsBike, DirectionsBoat } from "@mui/icons-material";
-import AddIcon from "@mui/icons-material/Add";
 import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import TrainIcon from "@mui/icons-material/Train";
 import {
   Box,
-  Button,
   Card,
   CardActions,
   CardContent,
@@ -23,7 +22,6 @@ import Typography from "@mui/material/Typography";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import NextLink from "next/link";
 import { useRouter } from "next/navigation";
 
 type Trip = components["schemas"]["TripSchema"];
@@ -133,21 +131,14 @@ export default function RoadtripsPage() {
                     { label: "5", value: 5 },
                     { label: "10", value: 10 },
                     { label: "20", value: 20 },
+                    { label: "100", value: 100 },
                   ]}
                 />
               </>
             )}
           </CardContent>
           <CardActions>
-            <Button
-              startIcon={<AddIcon />}
-              variant="contained"
-              LinkComponent={NextLink}
-              href="/trips/new"
-              // sx={{ bottom: "1rem", position: "absolute" }}
-            >
-              New Trip
-            </Button>
+            <NewTripButton />
           </CardActions>
         </Card>
       </Container>

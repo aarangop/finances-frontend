@@ -252,8 +252,10 @@ export interface components {
             balance: number;
             /** @default COP */
             currency: components["schemas"]["app__models__currency__Currency__2"];
-            /** Number */
-            number: string;
+            /** Account Number */
+            account_number: string;
+            /** Account Alias */
+            account_alias: string;
             /**
              * Expenses
              * @default []
@@ -270,8 +272,10 @@ export interface components {
             balance: number;
             /** @default COP */
             currency: components["schemas"]["app__models__currency__Currency__2"];
-            /** Number */
-            number: string;
+            /** Account Number */
+            account_number: string;
+            /** Account Alias */
+            account_alias: string;
             /**
              * Expenses
              * @default []
@@ -288,8 +292,10 @@ export interface components {
             balance: number;
             /** @default COP */
             currency: components["schemas"]["app__models__currency__Currency__2"];
-            /** Number */
-            number: string;
+            /** Account Number */
+            account_number: string;
+            /** Account Alias */
+            account_alias: string;
             /**
              * Expenses
              * @default []
@@ -327,17 +333,17 @@ export interface components {
              */
             international: boolean;
             /** Distance */
-            distance: number;
+            distance: number | null;
             /**
              * Expenses
              * @default []
              */
             expenses: components["schemas"]["TravelExpenseSchema"][];
             /** Odometer Start */
-            odometer_start: number;
+            odometer_start: number | null;
             /** Odometer End */
-            odometer_end: number;
-            vehicle: components["schemas"]["VehicleSchema"];
+            odometer_end: number | null;
+            vehicle: components["schemas"]["VehicleSchema"] | null;
         };
         /** CarTripSchema */
         "CarTripSchema-Input": {
@@ -368,17 +374,17 @@ export interface components {
              */
             international: boolean;
             /** Distance */
-            distance: number;
+            distance: number | null;
             /**
              * Expenses
              * @default []
              */
             expenses: components["schemas"]["TravelExpenseSchema"][];
             /** Odometer Start */
-            odometer_start: number;
+            odometer_start: number | null;
             /** Odometer End */
-            odometer_end: number;
-            vehicle: components["schemas"]["VehicleSchema"];
+            odometer_end: number | null;
+            vehicle: components["schemas"]["VehicleSchema"] | null;
             /** Id */
             id: number;
         };
@@ -411,17 +417,17 @@ export interface components {
              */
             international: boolean;
             /** Distance */
-            distance: number;
+            distance: number | null;
             /**
              * Expenses
              * @default []
              */
             expenses: components["schemas"]["TravelExpenseSchema"][];
             /** Odometer Start */
-            odometer_start: number;
+            odometer_start: number | null;
             /** Odometer End */
-            odometer_end: number;
-            vehicle: components["schemas"]["VehicleSchema"];
+            odometer_end: number | null;
+            vehicle: components["schemas"]["VehicleSchema"] | null;
             /** Id */
             id: number;
         };
@@ -595,7 +601,7 @@ export interface components {
              */
             international: boolean;
             /** Distance */
-            distance: number;
+            distance: number | null;
             /**
              * Expenses
              * @default []

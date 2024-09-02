@@ -4,6 +4,7 @@
  */
 
 import type { Config } from "jest";
+import { defaults } from "jest-config";
 import nextJest from "next/jest";
 
 const createJestConfig = nextJest({
@@ -17,6 +18,10 @@ const config: Config = {
 
   // The directory where Jest should output its coverage files
   coverageDirectory: "coverage",
+  coveragePathIgnorePatterns: [
+    ...defaults.coveragePathIgnorePatterns,
+    "<rootDir>/src/mocks",
+  ],
 
   // Indicates which provider should be used to instrument code for coverage
   coverageProvider: "v8",
@@ -35,8 +40,13 @@ const config: Config = {
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
 
+  // setupFiles: ["<rootDir>/jest.setup.ts"],
+
   // The test environment that will be used for testing
-  testEnvironment: "jsdom",
+  testEnvironment: "jest-fixed-jsdom",
+  testEnvironmentOptions: {
+    customExportConditions: [""],
+  },
 
   // The glob patterns Jest uses to detect test files
   testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[tj]s?(x)"],

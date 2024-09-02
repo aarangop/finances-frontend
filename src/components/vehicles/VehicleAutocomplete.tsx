@@ -1,6 +1,6 @@
 "use client";
 
-import client from "@/api/apiClient";
+import getClient from "@/api/apiClient";
 import { components } from "@/api/schema";
 import { Autocomplete, CircularProgress, TextField } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
@@ -10,17 +10,24 @@ interface VehicleAutocompleteProps<T extends FieldValues> {
   label?: string;
   onVehicleSelect: (vehicle: Vehicle) => void;
   field: ControllerRenderProps<T>;
+  required?: boolean;
 }
 type Vehicle = components["schemas"]["VehicleSchema"];
+
 /**
- * Auto-complete input for selecting a vehicle
- * @returns
+ * VehicleAutocomplete component.
+ *
+ * @template T - Type parameter representing the field values.
+ * @param {VehicleAutocompleteProps<T>} props - The component props.
+ * @returns {JSX.Element} - The rendered VehicleAutocomplete component.
  */
 export default function VehicleAutocomplete<T extends FieldValues>({
   label,
   onVehicleSelect,
   field,
-}: VehicleAutocompleteProps<T>) {
+  required = false,
+}: VehicleAutocompleteProps<T>): JSX.Element {
+  const client = getClient();
   const { data: vehicles, isPending } = useQuery({
     queryKey: ["vehicles"],
     queryFn: async () => client.GET("/vehicles/"),
@@ -33,18 +40,22 @@ export default function VehicleAutocomplete<T extends FieldValues>({
       getOptionLabel={(vehicle) =>
         `${vehicle.name} - ${vehicle.make} ${vehicle.model} ${vehicle.year}`
       }
-      isOptionEqualToValue={(option, value) => option.id === value.id}
+      isOptionEqualToValue={(option, value) =>
+        value === null || option.id === value.id
+      }
       multiple={false}
+      value={field.value || null}
       onChange={(_, value) => {
         field.onChange(value);
-        if (value !== null) {
+
+        if (value) {
           onVehicleSelect(value);
         }
       }}
       renderInput={(params) => (
         <TextField
           {...params}
-          label={label || "Vehicle"}
+          label={`${label || "Vehicle"} ${required ? "*" : ""}`}
           InputProps={{
             ...params.InputProps,
             endAdornment: (

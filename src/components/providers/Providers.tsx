@@ -7,6 +7,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "dayjs/locale/es";
+import { SnackbarProvider } from "notistack";
 import { ReactNode, useMemo, useState } from "react";
 import { ThemeContext, useThemeContext } from "../Context";
 
@@ -49,9 +50,11 @@ export default function Providers({ children }: { children: ReactNode }) {
   return (
     <ThemeProviderWrapper>
       <UnthemedProviders>
-        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-          {children}
-        </LocalizationProvider>
+        <SnackbarProvider maxSnack={3}>
+          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+            {children}
+          </LocalizationProvider>
+        </SnackbarProvider>
       </UnthemedProviders>
     </ThemeProviderWrapper>
   );
