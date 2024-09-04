@@ -28,6 +28,13 @@ import type { components } from "@/api/schema";
 
 type Vehicle = components["schemas"]["VehicleSchema"];
 
+/**
+ * VehicleCard component displays information about a vehicle.
+ *
+ * @param {Object} props - The component props.
+ * @param {Vehicle} props.vehicle - The vehicle object to display.
+ * @returns {JSX.Element} The rendered VehicleCard component.
+ */
 export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
   const theme = useTheme();
   const client = useRef(getClient());

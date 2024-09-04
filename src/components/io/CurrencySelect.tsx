@@ -8,6 +8,7 @@ interface CurrencySelectProps<T extends FieldValues> {
   label: string;
   error: boolean;
   labelId: string;
+  required?: boolean;
   field: ControllerRenderProps<T>;
 }
 
@@ -17,17 +18,20 @@ export default function CurrencySelect<T extends FieldValues>({
   labelId,
   field,
   error,
+  required = false,
 }: CurrencySelectProps<T>) {
+  const labelText = required ? `${label} *` : label;
   return (
     <>
-      <InputLabel id={labelId}>{label}</InputLabel>
+      <InputLabel id={labelId}>{labelText}</InputLabel>
       <Select
-        required
+        required={required}
         labelId={labelId}
-        label={label}
+        label={labelText}
         error={error}
+        sx={{ fontFamily: "monospace" }}
         {...field}
-        value={defaultCurrency}
+        value={field.value || defaultCurrency}
       >
         <MenuItem value={"COP"} sx={{ fontFamily: "monospace" }}>
           $ COP

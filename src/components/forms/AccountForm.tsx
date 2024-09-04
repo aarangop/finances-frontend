@@ -16,17 +16,26 @@ import {
 import IBAN from "iban";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import CurrencySelect from "../CurrencySelect";
-import ValidationFeedback from "../ValidationFeedback";
+import CurrencySelect from "../io/CurrencySelect";
+import ValidationFeedback from "../io/ValidationFeedback";
 
 type AccountCreate = components["schemas"]["AccountCreateSchema"];
 type Account = components["schemas"]["AccountSchema"];
 
 interface AccountFormProps {
-  account: AccountCreate | Account | null;
+  account: Account | null;
   enableDelete?: boolean;
 }
 
+/**
+ * Renders a form for creating or editing an account.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {Account} props.account - The account object to edit, or null if creating a new account.
+ * @param {boolean} [props.enableDelete=false] - Whether to enable the delete button.
+ * @returns {JSX.Element} The rendered AccountForm component.
+ */
 export default function AccountForm({
   account,
   enableDelete = false,

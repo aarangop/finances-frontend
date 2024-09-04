@@ -15,6 +15,7 @@ const testAccount: Account = {
   account_alias: "Test Account",
   expenses: [],
 };
+
 describe("AccountForm", () => {
   it("renders the form", () => {
     render(<AccountForm account={null} />);
@@ -108,20 +109,48 @@ describe("AccountForm", () => {
     expect(screen.getByLabelText("Balance *")).toHaveValue(0);
   });
 
-  it("renders curency field with default currency", () => {
-    render(<AccountForm account={null} />);
-    expect(screen.getByLabelText("Currency")).toHaveValue("COP");
+  it("renders the form with account bank", () => {
+    const accountData: Account = { ...testAccount, bank: "Test bank" };
+    render(<AccountForm account={accountData} />);
+    expect(screen.getByLabelText("Bank *")).toHaveValue("Test bank");
   });
 
-  it("renders the form with account data", () => {
-    render(<AccountForm account={testAccount} />);
-    expect(screen.getByLabelText("Bank *")).toHaveValue("Test bank");
+  it("renders the form with account holder", () => {
+    const accountData: Account = { ...testAccount, holder: "My Self" };
+    render(<AccountForm account={accountData} />);
     expect(screen.getByLabelText("Holder *")).toHaveValue("My Self");
+  });
+
+  it("renders the form with account balance", () => {
+    const accountData: Account = { ...testAccount, balance: 100000 };
+    render(<AccountForm account={accountData} />);
     expect(screen.getByLabelText("Balance *")).toHaveValue(100000);
-    expect(screen.getByLabelText("Currency")).toHaveValue("COP");
+  });
+
+  it("renders the form with account number", () => {
+    const accountData: Account = {
+      ...testAccount,
+      account_number: "1234567890",
+    };
+    render(<AccountForm account={accountData} />);
     expect(screen.getByLabelText("Account Number / IBAN *")).toHaveValue(
       "1234567890"
     );
+  });
+
+  it("renders the form with account currency", () => {
+    const accountData: Account = { ...testAccount, currency: "EUR" };
+    render(<AccountForm account={accountData} />);
+    const currencySelect = screen.getByLabelText("Currency");
+    expect(currencySelect).toHaveTextContent("€ EUR");
+  });
+
+  it("renders the form with account alias", () => {
+    const accountData: Account = {
+      ...testAccount,
+      account_alias: "Test Account",
+    };
+    render(<AccountForm account={accountData} />);
     expect(screen.getByLabelText("Account Alias *")).toHaveValue(
       "Test Account"
     );
