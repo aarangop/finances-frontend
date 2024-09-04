@@ -1,6 +1,7 @@
 "use client";
 
 import { components } from "@/api/schema";
+import { useCreateAccount } from "@/hooks/account";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Box,
@@ -15,6 +16,8 @@ import {
 } from "@mui/material";
 import IBAN from "iban";
 import { useRouter } from "next/navigation";
+import { enqueueSnackbar } from "notistack";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import CurrencySelect from "../io/CurrencySelect";
 import ValidationFeedback from "../io/ValidationFeedback";
@@ -70,15 +73,60 @@ export default function AccountForm({
     account_alias: { required: "Alias is required" },
   };
 
+  const [saveDisabled, setSaveDisabled] = useState(false);
+
   const {
     control,
     handleSubmit,
-    formState: { errors },
-  } = useForm<AccountCreate>({ defaultValues });
+    formState: { errors, isValid: formIsValid },
+  } = useForm<AccountCreate | Account>({ defaultValues, mode: "onBlur" });
 
-  const onSubmit = (data: AccountCreate | Account) => {
-    console.log(data);
+  const onCreateAccountSuccess = (data: Account, variables: AccountCreate) => {
+    const accountStr = `${data.bank} - ${data.account_number}`;
+    enqueueSnackbar(
+      `Account ${accountStr} created successfully.\nRedirecting to account in 5 seconds`,
+      {
+        variant: "success",
+        autoHideDuration: 5000,
+      }
+    );
+    setTimeout(() => {
+      router.push(`/accounts/${data.id}`);
+    }, 5000);
   };
+
+  const onCreateAccountError = (error: Error) => {
+    enqueueSnackbar(`Error creating account: ${error.message}`, {
+      variant: "error",
+      autoHideDuration: 5000,
+    });
+  };
+
+  const {
+    data: createAccountData,
+    isPending: createAccountIsPending,
+    status,
+    isError: createAccountIsError,
+    mutateAsync: createAccountAsync,
+  } = useCreateAccount({
+    onSuccess: onCreateAccountSuccess,
+    onError: onCreateAccountError,
+  });
+
+  const onSubmit = async (data: AccountCreate | Account) => {
+    if (!account) {
+      createAccountAsync(data as AccountCreate);
+      return;
+    }
+  };
+  useEffect(() => {
+    if (!formIsValid) {
+      setSaveDisabled(true);
+      return;
+    }
+    const requestsPending = createAccountIsPending;
+    setSaveDisabled(requestsPending);
+  }, [createAccountIsPending, formIsValid]);
 
   return (
     <form
@@ -211,7 +259,9 @@ export default function AccountForm({
           </Grid>
         </CardContent>
         <CardActions>
-          <Button type="submit">Save</Button>
+          <Button type="submit" disabled={saveDisabled}>
+            Save
+          </Button>
           <Button onClick={router.back}>Cancel</Button>
           {enableDelete && (
             <Button color="error" endIcon={<DeleteIcon />}>
