@@ -1,7 +1,7 @@
 "use client";
 import client from "@/api/apiClient";
-import Main from "@/components/Main";
-import CarTripForm from "@/components/trips/car/CarTripForm";
+import CarTripForm from "@/components/forms/CarTripForm";
+import Main from "@/components/layout/Main";
 import { CircularProgress, Container } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 

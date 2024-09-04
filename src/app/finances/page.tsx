@@ -1,4 +1,4 @@
-import Main from "@/components/Main";
+import Main from "@/components/layout/Main";
 import { Link, Typography } from "@mui/material";
 
 export default function FinancesPage() {

@@ -1,6 +1,6 @@
-import client from "@/api/apiClient";
-import Main from "@/components/Main";
-import VehicleList from "@/components/vehicles/VehicleList";
+import getClient from "@/api/apiClient";
+import VehicleCardGrid from "@/components/io/VehicleCardGrid";
+import Main from "@/components/layout/Main";
 import AddIcon from "@mui/icons-material/Add";
 import { Button, Container } from "@mui/material";
 import Typography from "@mui/material/Typography";
@@ -15,7 +15,10 @@ export default function VehiclesPage() {
   const queryClient = new QueryClient();
   queryClient.prefetchQuery({
     queryKey: ["vehicles"],
-    queryFn: () => client.GET("/vehicles/"),
+    queryFn: () => {
+      const client = getClient();
+      client.GET("/vehicles/");
+    },
   });
 
   return (
@@ -32,7 +35,7 @@ export default function VehiclesPage() {
         </Typography>
       </Container>
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <VehicleList />
+        <VehicleCardGrid />
       </HydrationBoundary>
       <Container>
         <Button

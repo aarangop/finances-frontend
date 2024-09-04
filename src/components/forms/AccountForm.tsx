@@ -11,13 +11,12 @@ import {
   CardHeader,
   FormControl,
   Grid,
-  MenuItem,
-  Select,
   TextField,
 } from "@mui/material";
 import IBAN from "iban";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
+import CurrencySelect from "../CurrencySelect";
 import ValidationFeedback from "../ValidationFeedback";
 
 type AccountCreate = components["schemas"]["AccountCreateSchema"];
@@ -50,7 +49,7 @@ export default function AccountForm({
     balance: { required: "Balance is required" },
     currency: { required: "Currency is required" },
     account_number: {
-      required: "Number is required",
+      required: "Account number or IBAN is required",
       validate: (value: string) => {
         const isIBAN = IBAN.isValid(value);
         if (isIBAN) return true;
@@ -69,11 +68,15 @@ export default function AccountForm({
   } = useForm<AccountCreate>({ defaultValues });
 
   const onSubmit = (data: AccountCreate | Account) => {
-    console.log("Submitting account data");
+    console.log(data);
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      aria-label="account form"
+      noValidate
+    >
       <Card>
         <CardHeader
           title={
@@ -88,9 +91,16 @@ export default function AccountForm({
                   control={control}
                   name="account_alias"
                   rules={validationRules.account_alias}
-                  render={({ field }) => <TextField label="Alias" {...field} />}
+                  render={({ field }) => (
+                    <TextField
+                      required
+                      error={!!errors.account_alias}
+                      label="Account Alias"
+                      {...field}
+                    />
+                  )}
                 />
-                <ValidationFeedback error={errors} name="account_alias" />
+                <ValidationFeedback errors={errors} name="account_alias" />
               </Box>
             </Grid>
             <Grid item xs={12} md={6}>
@@ -100,10 +110,15 @@ export default function AccountForm({
                   name="holder"
                   rules={validationRules.holder}
                   render={({ field }) => (
-                    <TextField label="Holder" {...field} />
+                    <TextField
+                      label="Holder"
+                      error={!!errors.holder}
+                      required
+                      {...field}
+                    />
                   )}
                 />
-                <ValidationFeedback error={errors} name="holder" />
+                <ValidationFeedback errors={errors} name="holder" />
               </Box>
             </Grid>
             <Grid item xs={12} md={6}>
@@ -112,9 +127,17 @@ export default function AccountForm({
                   control={control}
                   name="bank"
                   rules={validationRules.bank}
-                  render={({ field }) => <TextField label="Bank" {...field} />}
+                  defaultValue={account?.bank || defaultValues.bank}
+                  render={({ field }) => (
+                    <TextField
+                      required
+                      error={!!errors.bank}
+                      label="Bank"
+                      {...field}
+                    />
+                  )}
                 />
-                <ValidationFeedback error={errors} name="bank" />
+                <ValidationFeedback errors={errors} name="bank" />
               </Box>
             </Grid>
             <Grid item xs={12} md={6}>
@@ -124,10 +147,15 @@ export default function AccountForm({
                   name="account_number"
                   rules={validationRules.account_number}
                   render={({ field }) => (
-                    <TextField label="Account Number / IBAN" {...field} />
+                    <TextField
+                      label="Account Number / IBAN"
+                      required
+                      error={!!errors.account_number}
+                      {...field}
+                    />
                   )}
                 />
-                <ValidationFeedback error={errors} name="account_number" />
+                <ValidationFeedback errors={errors} name="account_number" />
               </Box>
             </Grid>
             <Grid item xs={12} md={6}>
@@ -140,7 +168,9 @@ export default function AccountForm({
                       rules={validationRules.balance}
                       render={({ field }) => (
                         <TextField
-                          label="Current Balance"
+                          label="Balance"
+                          required
+                          error={!!errors.balance}
                           type="number"
                           {...field}
                         />
@@ -152,33 +182,21 @@ export default function AccountForm({
                       control={control}
                       name="currency"
                       rules={validationRules.currency}
+                      defaultValue={account?.currency || defaultValues.currency}
                       render={({ field }) => (
-                        <Select {...field}>
-                          <MenuItem
-                            value="COP"
-                            sx={{ fontFamily: "monospace" }}
-                          >
-                            $ COP
-                          </MenuItem>
-                          <MenuItem
-                            value="USD"
-                            sx={{ fontFamily: "monospace" }}
-                          >
-                            $ USD
-                          </MenuItem>
-                          <MenuItem
-                            value="EUR"
-                            sx={{ fontFamily: "monospace" }}
-                          >
-                            € EUR
-                          </MenuItem>
-                        </Select>
+                        <CurrencySelect
+                          label="Currency"
+                          labelId="currency-label"
+                          field={field}
+                          error={!!errors.currency}
+                          defaultCurrency={"COP"}
+                        />
                       )}
                     />
                   </FormControl>
                 </Box>
-                <ValidationFeedback error={errors} name="balance" />
-                <ValidationFeedback error={errors} name="currency" />
+                <ValidationFeedback errors={errors} name="balance" />
+                <ValidationFeedback errors={errors} name="currency" />
               </Box>
             </Grid>
           </Grid>

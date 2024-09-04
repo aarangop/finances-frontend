@@ -2,7 +2,7 @@
 
 import client from "@/api/apiClient";
 import { getQueryClient } from "@/api/queryClient";
-import Main from "@/components/Main";
+import Main from "@/components/layout/Main";
 import {
   Box,
   Button,

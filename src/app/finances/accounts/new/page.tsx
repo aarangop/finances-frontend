@@ -1,5 +1,5 @@
-import AccountForm from "@/components/accounts/AccountForm";
-import Main from "@/components/Main";
+import AccountForm from "@/components/forms/AccountForm";
+import Main from "@/components/layout/Main";
 import { Container } from "@mui/material";
 
 export default function NewAccountPage() {

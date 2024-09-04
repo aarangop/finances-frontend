@@ -1,5 +1,5 @@
-import Main from "@/components/Main";
-import CarTripForm from "@/components/trips/car/CarTripForm";
+import CarTripForm from "@/components/forms/CarTripForm";
+import Main from "@/components/layout/Main";
 import { Container } from "@mui/material";
 
 export default function NewCarTripPage() {

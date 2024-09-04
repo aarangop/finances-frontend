@@ -1,9 +1,9 @@
 "use client";
 
-import client from "@/api/apiClient";
+import getClient from "@/api/apiClient";
 import { components } from "@/api/schema";
-import Main from "@/components/Main";
-import NewTripButton from "@/components/trips/NewTripButton";
+import NewTripButton from "@/components/buttons/NewTripButton";
+import Main from "@/components/layout/Main";
 import { DirectionsBike, DirectionsBoat } from "@mui/icons-material";
 import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
@@ -23,18 +23,20 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
+import { useRef } from "react";
 
 type Trip = components["schemas"]["TripSchema"];
 type Expense = components["schemas"]["ExpenseSchema"];
 
 export default function RoadtripsPage() {
+  const client = useRef(getClient());
   const {
     data: trips,
     isPending,
     isError,
   } = useQuery({
     queryKey: ["trips"],
-    queryFn: async () => client.GET("/trips/"),
+    queryFn: async () => client.current.GET("/trips/"),
   });
 
   const router = useRouter();

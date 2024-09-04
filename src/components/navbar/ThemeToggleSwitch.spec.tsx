@@ -1,7 +1,6 @@
-import { fireEvent, screen } from "@testing-library/react";
-import ThemeToggleSwitch from "@/components/ThemeToggleSwitch";
-import { render } from "@testing-library/react";
-import Providers from "./providers/Providers";
+import ThemeToggleSwitch from "@/components/navbar/ThemeToggleSwitch";
+import { fireEvent, render, screen } from "@testing-library/react";
+import Providers from "../providers/Providers";
 
 test("it toggles between light and dark modes", () => {
   render(

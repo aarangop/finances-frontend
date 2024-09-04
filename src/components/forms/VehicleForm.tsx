@@ -20,7 +20,7 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import DeleteVehicleDialog from "./DeleteVehicleDialog";
+import DeleteVehicleDialog from "../dialogs/DeleteVehicleDialog";
 
 type Vehicle = components["schemas"]["VehicleSchema"];
 

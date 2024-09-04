@@ -9,7 +9,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "dayjs/locale/es";
 import { SnackbarProvider } from "notistack";
 import { ReactNode, useMemo, useState } from "react";
-import { ThemeContext, useThemeContext } from "../Context";
+import { ThemeContext, useThemeContext } from "../context/themeContext";
 
 export function ThemeProviderWrapper({ children }: { children: ReactNode }) {
   const [mode, setMode] = useState<PaletteMode>("dark");

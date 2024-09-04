@@ -1,6 +1,6 @@
 import { components } from "@/api/schema";
-import Main from "@/components/Main";
-import VehicleForm from "@/components/vehicles/VehicleForm";
+import VehicleForm from "@/components/forms/VehicleForm";
+import Main from "@/components/layout/Main";
 import { Container, Typography } from "@mui/material";
 
 type Vehicle = components["schemas"]["VehicleSchema"];

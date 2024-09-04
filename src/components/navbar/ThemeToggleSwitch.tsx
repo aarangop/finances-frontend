@@ -2,7 +2,7 @@
 
 import { DarkMode, LightMode } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
-import { useThemeContext } from "./Context";
+import { useThemeContext } from "../context/themeContext";
 
 export default function ThemeToggleSwitch() {
   const { mode, toggleMode: setMode } = useThemeContext();

@@ -1,14 +1,16 @@
 "use client";
 
+import getClient from "@/api/apiClient";
 import { Container, Grid, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import VehicleCard from "./VehicleCard";
-import client from "@/api/apiClient";
+import { useRef } from "react";
+import VehicleCard from "../cards/VehicleCard";
 
-export default function VehicleList() {
+export default function VehicleCardGrid() {
+  const client = useRef(getClient());
   const { data, status } = useQuery({
     queryKey: ["vehicles"],
-    queryFn: () => client.GET("/vehicles/"),
+    queryFn: () => client.current.GET("/vehicles/"),
   });
 
   return (

@@ -1,5 +1,4 @@
-import Main from "@/components/Main";
-import styles from "./page.module.css";
+import Main from "@/components/layout/Main";
 import { Typography } from "@mui/material";
 
 export default function Home() {

@@ -20,16 +20,17 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import { QueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import DeleteVehicleDialog from "./DeleteVehicleDialog";
+import { useRef, useState } from "react";
+import DeleteVehicleDialog from "../dialogs/DeleteVehicleDialog";
 
-import client from "@/api/apiClient";
+import getClient from "@/api/apiClient";
 import type { components } from "@/api/schema";
 
 type Vehicle = components["schemas"]["VehicleSchema"];
 
 export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
   const theme = useTheme();
+  const client = useRef(getClient());
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const handleDialogClose = () => {
     setDeleteDialogOpen(false);
@@ -39,7 +40,7 @@ export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
   queryClient.prefetchQuery({
     queryKey: ["vehicles", vehicle.id],
     queryFn: () =>
-      client.GET("/vehicles/{vehicle_id}", {
+      client.current.GET("/vehicles/{vehicle_id}", {
         params: {
           path: { vehicle_id: vehicle.id },
         },

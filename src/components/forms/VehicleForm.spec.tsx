@@ -1,5 +1,5 @@
 import { components } from "@/api/schema";
-import VehicleForm from "@/components/vehicles/VehicleForm";
+import VehicleForm from "@/components/forms/VehicleForm";
 import { render } from "@/testUtils";
 import { screen } from "@testing-library/react";
 import Providers from "../providers/Providers";

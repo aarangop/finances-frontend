@@ -1,4 +1,4 @@
-import VehicleAutocomplete from "@/components/vehicles/VehicleAutocomplete";
+import VehicleAutocomplete from "@/components/io/VehicleAutocomplete";
 import { useQuery } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";

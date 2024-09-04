@@ -1,7 +1,7 @@
 "use client";
 
 import { components } from "@/api/schema";
-import VehicleAutocomplete from "@/components/vehicles/VehicleAutocomplete";
+import VehicleAutocomplete from "@/components/io/VehicleAutocomplete";
 import { useCreateTrip, useUpdateTrip } from "@/hooks/carTrip";
 import { useCarTripForm } from "@/hooks/useCarTripForm";
 import { ErrorMessage } from "@hookform/error-message";

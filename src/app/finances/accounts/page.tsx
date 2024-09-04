@@ -1,7 +1,7 @@
 "use client";
 
-import AccountCard from "@/components/accounts/AccountCard";
-import Main from "@/components/Main";
+import AccountCard from "@/components/cards/AccountCard";
+import Main from "@/components/layout/Main";
 import { useGetAccounts } from "@/hooks/account";
 import AddIcon from "@mui/icons-material/Add";
 import { Button, Container, Grid } from "@mui/material";
