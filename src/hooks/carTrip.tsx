@@ -23,7 +23,7 @@ interface CarTripMutationProps {
  *
  * @returns {MutationResult} - The result of the mutation.
  */
-export const useCreateTrip = ({
+export const useCreateCarTrip = ({
   onSuccessCallback,
   onErrorCallback,
 }: CarTripMutationProps) =>

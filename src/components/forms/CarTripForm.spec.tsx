@@ -6,6 +6,30 @@ import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
 import CarTripForm from "./CarTripForm";
 
+type Vehicle = components["schemas"]["VehicleSchema"];
+
+const mockVehicles: Vehicle[] = [
+  {
+    id: 1,
+    name: "Carolita",
+    make: "Toyota",
+    model: "Corolla",
+    year: 2020,
+    odometer: 0,
+    license_plate: "aaa-111",
+    vehicle_type: "car",
+  },
+  {
+    id: 2,
+    name: "Car 2",
+    make: "Honda",
+    model: "Civic",
+    year: 2019,
+    odometer: 0,
+    license_plate: "bbb-222",
+    vehicle_type: "car",
+  },
+];
 describe("Car Trip Form UI", () => {
   it("Renders empty origin field for new car trip", () => {
     render(<CarTripForm />);
@@ -72,7 +96,7 @@ describe("Car Trip Form UI", () => {
     expect(screen.getByLabelText("End *")).not.toBeDisabled();
   });
 
-  it("Renders empty destination for new car trip", () => {
+  it("renders empty destination for new car trip", () => {
     render(<CarTripForm />);
 
     expect(screen.getByLabelText("Destination *")).toHaveValue("");
@@ -114,41 +138,69 @@ describe("Car Trip Form UI", () => {
       screen.queryByRole("button", { name: /delete/i })
     ).not.toBeInTheDocument();
   });
-});
 
-type Vehicle = components["schemas"]["VehicleSchema"];
-
-describe("Car Trip Form API", () => {
-  it("creates a new car trip", async () => {
+  test("save button is disabled when form is invalid", () => {
     render(<CarTripForm />);
 
+    expect(screen.getByRole("button", { name: /save/i })).toBeDisabled();
+  });
+
+  test("save button is enabled when form is valid", async () => {
     // Mock vehicles API
     server.use(
       http.get<any, Vehicle[], any, string>(apiPath("/vehicles/"), async () => {
-        return HttpResponse.json<Vehicle[]>([
-          {
-            id: 1,
-            name: "Carolita",
-            make: "Toyota",
-            model: "Corolla",
-            year: 2020,
-            odometer: 0,
-            license_plate: "aaa-111",
-            vehicle_type: "car",
-          },
-          {
-            id: 2,
-            name: "Car 2",
-            make: "Honda",
-            model: "Civic",
-            year: 2019,
-            odometer: 0,
-            license_plate: "bbb-222",
-            vehicle_type: "car",
-          },
-        ]);
+        return HttpResponse.json<Vehicle[]>(mockVehicles);
       })
     );
+
+    render(<CarTripForm />);
+
+    await act(async () => {
+      screen.getByLabelText("Origin *").focus();
+      fireEvent.change(screen.getByLabelText("Origin *"), {
+        target: { value: "City A" },
+      });
+
+      screen.getByLabelText("Destination *").focus();
+      fireEvent.change(screen.getByLabelText("Destination *"), {
+        target: { value: "City B" },
+      });
+
+      screen.getByLabelText("Start *").focus();
+      fireEvent.change(screen.getByLabelText("Start *"), {
+        target: { value: "22/08/2024" },
+      });
+
+      screen.getByLabelText("End *").focus();
+      fireEvent.change(screen.getByLabelText("End *"), {
+        target: { value: "23/08/2024" },
+      });
+
+      screen.getByLabelText("Vehicle *").focus();
+      userEvent.type(screen.getByLabelText("Vehicle *"), "Carolita");
+      expect(
+        screen.getByText("Carolita - Toyota Corolla 2020")
+      ).toBeInTheDocument();
+      screen.getByText("Carolita - Toyota Corolla 2020").click();
+      screen.getByLabelText("Vehicle *").blur();
+    });
+
+    expect(screen.getByRole("button", { name: /save/i })).not.toBeDisabled();
+  });
+});
+
+describe("Car Trip Form API", () => {
+  beforeAll(() => {
+    // Mock vehicles API
+    server.use(
+      http.get<any, Vehicle[], any, string>(apiPath("/vehicles/"), async () => {
+        return HttpResponse.json<Vehicle[]>(mockVehicles);
+      })
+    );
+  });
+
+  it("creates a new car trip", async () => {
+    render(<CarTripForm />);
 
     await act(async () => {
       screen.getByLabelText("Origin *").focus();
@@ -179,12 +231,14 @@ describe("Car Trip Form API", () => {
     });
 
     const vehicleInput = screen.getByLabelText("Vehicle *");
+
     fireEvent.focus(vehicleInput);
-    await userEvent.type(vehicleInput, "Carolita");
+    userEvent.type(vehicleInput, "Carolita");
 
     await waitFor(() => {
-      const option = screen.getByText("Carolita - Toyota Corolla 2020");
-      expect(option).toBeInTheDocument();
+      expect(
+        screen.getByText("Carolita - Toyota Corolla 2020")
+      ).toBeInTheDocument();
     });
 
     screen.getByRole("button", { name: /save/i }).click();

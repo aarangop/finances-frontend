@@ -2,7 +2,7 @@ import getClient from "@/api/apiClient";
 import { components } from "@/api/schema";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook } from "@testing-library/react";
-import { useCreateTrip, useUpdateTrip } from "./carTrip";
+import { useCreateCarTrip, useUpdateTrip } from "./carTrip";
 
 jest.mock("@/api/apiClient", () => ({
   POST: jest.fn(),
@@ -50,7 +50,6 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
 
 const client = getClient();
 describe("useCreateTrip", () => {
-  beforeEach(() => {});
   it("should call the create trip API and return the response data", async () => {
     const onSuccessCallback = jest.fn();
     const onErrorCallback = jest.fn();
@@ -58,7 +57,7 @@ describe("useCreateTrip", () => {
     (client.POST as jest.Mock).mockResolvedValueOnce({ data: tripOutput });
 
     const { result } = renderHook(
-      () => useCreateTrip({ onSuccessCallback, onErrorCallback }),
+      () => useCreateCarTrip({ onSuccessCallback, onErrorCallback }),
       { wrapper }
     );
 
@@ -84,7 +83,7 @@ describe("useCreateTrip", () => {
     (client.POST as jest.Mock).mockRejectedValueOnce(mockError);
 
     const { result } = renderHook(
-      () => useCreateTrip({ onSuccessCallback, onErrorCallback }),
+      () => useCreateCarTrip({ onSuccessCallback, onErrorCallback }),
       { wrapper }
     );
 

@@ -1,8 +1,8 @@
 "use client";
 
 import { components } from "@/api/schema";
-import VehicleAutocomplete from "@/components/io/VehicleAutocomplete";
-import { useCreateTrip, useUpdateTrip } from "@/hooks/carTrip";
+import VehicleAutocomplete from "@/components/autocomplete/VehicleAutocomplete";
+import { useCreateCarTrip, useUpdateTrip } from "@/hooks/carTrip";
 import { useCarTripForm } from "@/hooks/useCarTripForm";
 import { ErrorMessage } from "@hookform/error-message";
 import {
@@ -23,7 +23,7 @@ import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
 type CarTrip = components["schemas"]["CarTripSchema-Output"];
@@ -102,13 +102,20 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
     international: { required: true },
   };
 
+  const [saveDisabled, isSaveDisabled] = useState(true);
+
   const {
     control,
     handleSubmit,
     watch,
     setValue,
-    formState: { errors },
-  } = useForm<CarTrip>({ defaultValues });
+    formState: { errors, isValid: formIsValid },
+  } = useForm<CarTrip>({ defaultValues, mode: "onBlur" });
+
+  useEffect(() => {
+    isSaveDisabled(!formIsValid);
+  }, [formIsValid]);
+
   const router = useRouter();
 
   const onCreateSuccess = useCallback((trip: CarTrip | undefined) => {
@@ -151,7 +158,7 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
     });
   }, []);
 
-  const createTripMutation = useCreateTrip({
+  const createTripMutation = useCreateCarTrip({
     onSuccessCallback: onCreateSuccess,
     onErrorCallback: onCreateError,
   });
@@ -430,7 +437,7 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
           </Grid>
         </CardContent>
         <CardActions>
-          <Button type="submit" variant="contained">
+          <Button type="submit" variant="contained" disabled={saveDisabled}>
             Save
           </Button>
         </CardActions>

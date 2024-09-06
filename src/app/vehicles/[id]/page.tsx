@@ -1,6 +1,6 @@
 "use client";
 
-import client from "@/api/apiClient";
+import getClient from "@/api/apiClient";
 import VehicleForm from "@/components/forms/VehicleForm";
 import Main from "@/components/layout/Main";
 import { ExpandLessRounded, ExpandMoreRounded } from "@mui/icons-material";
@@ -16,17 +16,18 @@ import {
   Typography,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export default function VehicleDetailPage({
   params,
 }: {
   params: { id: number };
 }) {
+  const client = useRef(getClient());
   const { data: vehicle, status } = useQuery({
     queryKey: ["vehicles", params.id],
     queryFn: () =>
-      client.GET("/vehicles/{vehicle_id}", {
+      client.current.GET("/vehicles/{vehicle_id}", {
         params: {
           path: { vehicle_id: params.id },
         },

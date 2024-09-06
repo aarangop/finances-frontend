@@ -2,8 +2,9 @@
 
 import getClient from "@/api/apiClient";
 import { components } from "@/api/schema";
+import { useGetVehicles } from "@/hooks/vehicle";
 import { Autocomplete, CircularProgress, TextField } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
+import { useRef } from "react";
 import { ControllerRenderProps, FieldValues } from "react-hook-form";
 
 interface VehicleAutocompleteProps<T extends FieldValues> {
@@ -27,16 +28,13 @@ export default function VehicleAutocomplete<T extends FieldValues>({
   field,
   required = false,
 }: VehicleAutocompleteProps<T>): JSX.Element {
-  const client = getClient();
-  const { data: vehicles, isPending } = useQuery({
-    queryKey: ["vehicles"],
-    queryFn: async () => client.GET("/vehicles/"),
-  });
+  const client = useRef(getClient());
+  const { data: vehicles, isPending } = useGetVehicles();
 
   return (
     <Autocomplete
       {...field}
-      options={vehicles?.data || []}
+      options={vehicles || []}
       getOptionLabel={(vehicle) =>
         `${vehicle.name} - ${vehicle.make} ${vehicle.model} ${vehicle.year}`
       }

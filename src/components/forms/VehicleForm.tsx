@@ -1,8 +1,7 @@
 "use client";
 
-import client from "@/api/apiClient";
-import { getQueryClient } from "@/api/queryClient";
 import { components } from "@/api/schema";
+import { useCreateVehicle, useUpdateVehicle } from "@/hooks/vehicle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import {
@@ -17,8 +16,8 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { enqueueSnackbar } from "notistack";
+import { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import DeleteVehicleDialog from "../dialogs/DeleteVehicleDialog";
 
@@ -37,7 +36,6 @@ export default function VehicleForm({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const handleDialogClose = () => setDeleteDialogOpen(false);
   const vehicleTypes = ["car", "motorcycle", "truck"];
-  const queryClient = getQueryClient();
 
   const {
     control,
@@ -47,31 +45,48 @@ export default function VehicleForm({
     defaultValues: vehicle,
   });
 
-  const mutation = useMutation({
-    mutationFn: (data: Vehicle) => {
-      if (!newVehicle) {
-        return client.PUT("/vehicles/{vehicle_id}", {
-          params: { path: { vehicle_id: vehicle.id } },
-          body: data,
-        });
-      } else {
-        return client.POST("/vehicles/", {
-          body: data,
-        });
-      }
-    },
-    mutationKey: ["vehicles", vehicle.id],
-    onSuccess: async ({ response }) => {
-      const data = (await response.json()) as Vehicle;
-      queryClient.invalidateQueries({ queryKey: ["vehicles"] });
-      onSuccess(data);
-    },
-  });
+  const {
+    data: createVehicleData,
+    isPending: createVehicleIsPending,
+    isSuccess: createVehicleIsSuccess,
+    isError: createVehicleIsError,
+    mutateAsync: createVehicleAsync,
+  } = useCreateVehicle({});
+
+  const {
+    data: updateVehicleData,
+    isPending: updateVehicleIsPending,
+    isSuccess: updateVehicleIsSuccess,
+    isError: updateVehicleIsError,
+    mutateAsync: updateVehicleAsync,
+  } = useUpdateVehicle({});
+
+  useEffect(() => {
+    if (createVehicleIsSuccess) {
+      enqueueSnackbar("Vehicle created successfully", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
+    }
+  }, [createVehicleIsSuccess]);
+
+  useEffect(() => {
+    if (updateVehicleIsSuccess) {
+      enqueueSnackbar("Vehicle updated successfully", {
+        variant: "info",
+        autoHideDuration: 3000,
+      });
+    }
+  }, [updateVehicleIsSuccess]);
 
   const onSubmit: SubmitHandler<Vehicle> = async (data, event) => {
     event?.preventDefault();
     event?.stopPropagation();
-    mutation.mutate(data);
+    if (newVehicle) {
+      await createVehicleAsync(data);
+    } else {
+      await updateVehicleAsync(data);
+    }
   };
 
   return (
