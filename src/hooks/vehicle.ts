@@ -28,10 +28,7 @@ interface UseCreateVehicleProps {
   onSuccess?: (data: Vehicle, variables: VehicleCreate, context: any) => void;
   onError?: (error: Error, variables: VehicleCreate, context: any) => void;
 }
-export const useCreateVehicle = ({
-  onSuccess = () => {},
-  onError = () => {},
-}: UseCreateVehicleProps) =>
+export const useCreateVehicle = (props?: UseCreateVehicleProps) =>
   useMutation({
     mutationKey: ["vehicles", "create"],
     mutationFn: async (vehicle: VehicleCreate) => {
@@ -45,8 +42,8 @@ export const useCreateVehicle = ({
         throw error;
       }
     },
-    onSuccess,
-    onError,
+    onSuccess: props?.onSuccess,
+    onError: props?.onError,
   });
 
 interface UseUpdateVehicleProps {
@@ -54,10 +51,7 @@ interface UseUpdateVehicleProps {
   onError?: (error: Error, variables: Vehicle, context: any) => void;
 }
 
-export const useUpdateVehicle = ({
-  onSuccess,
-  onError,
-}: UseUpdateVehicleProps) =>
+export const useUpdateVehicle = (props?: UseUpdateVehicleProps) =>
   useMutation({
     mutationKey: ["vehicles", "update"],
     mutationFn: async (vehicle: Vehicle) => {
@@ -74,6 +68,6 @@ export const useUpdateVehicle = ({
         throw error;
       }
     },
-    onSuccess,
-    onError,
+    onSuccess: props?.onSuccess,
+    onError: props?.onError,
   });

@@ -10,7 +10,9 @@
     "openapi-generate": "openapi-typescript http://localhost:8000/openapi.json --output src/api/schema.ts",
     "test:ts": "tsc --noEmit",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@emotion/react": "^11.13.0",
@@ -28,6 +30,7 @@
     "dayjs": "^1.11.12",
     "iban": "^0.0.14",
     "next": "^14.2.6",
+    "next-router-mock": "^0.9.13",
     "notistack": "^3.0.1",
     "openapi-fetch": "^0.10.5",
     "openapi-zod-client": "^1.18.2",
@@ -63,6 +66,7 @@
     "jest-fixed-jsdom": "^0.0.2",
     "msw": "^2.4.1",
     "openapi-typescript": "^7.3.0",
+    "storybook": "^8.2.9",
     "ts-node": "^10.9.2",
     "typescript": "^5",
     "undici": "^6.19.8",

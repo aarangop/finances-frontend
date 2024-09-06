@@ -19,11 +19,9 @@ import NextLink from "next/link";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
-import { QueryClient } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import DeleteVehicleDialog from "../dialogs/DeleteVehicleDialog";
 
-import getClient from "@/api/apiClient";
 import type { components } from "@/api/schema";
 
 type Vehicle = components["schemas"]["VehicleSchema"];
@@ -37,22 +35,10 @@ type Vehicle = components["schemas"]["VehicleSchema"];
  */
 export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
   const theme = useTheme();
-  const client = useRef(getClient());
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const handleDialogClose = () => {
     setDeleteDialogOpen(false);
   };
-
-  const queryClient = new QueryClient();
-  queryClient.prefetchQuery({
-    queryKey: ["vehicles", vehicle.id],
-    queryFn: () =>
-      client.current.GET("/vehicles/{vehicle_id}", {
-        params: {
-          path: { vehicle_id: vehicle.id },
-        },
-      }),
-  });
 
   return (
     <>
@@ -98,33 +84,38 @@ export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
           }
         />
         <CardContent>
-          <Grid container>
-            <Grid item sm={12} md={6}>
-              <Box display="flex" flexDirection="column">
-                <Typography variant="body2" color={theme.palette.grey[600]}>
-                  License Plate
-                </Typography>
-                <Typography variant="body1" sx={{ fontFamily: "monospace" }}>
-                  {vehicle.license_plate}
-                </Typography>
-              </Box>
-            </Grid>
-            <Grid item sm={12} md={6}>
-              <Box display="flex" flexDirection="column">
-                <Typography variant="body2" color={theme.palette.grey[600]}>
-                  Color
-                </Typography>
-                <Box display="flex" flexDirection="row">
-                  <Chip
-                    label={vehicle.color?.toUpperCase()}
-                    size="small"
-                    variant={vehicle.color ? "filled" : "outlined"}
-                    sx={{ fontFamily: "monospace", transform: "uppercase" }}
-                  />
+          <Grid container gap={1}>
+            <Grid item sm={12}>
+              <Box
+                display="flex"
+                flexDirection="row"
+                gap={1}
+                justifyContent="space-between"
+              >
+                <Box display="flex" flexDirection="column">
+                  <Typography variant="body2" color={theme.palette.grey[600]}>
+                    License Plate
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontFamily: "monospace" }}>
+                    {vehicle.license_plate}
+                  </Typography>
+                </Box>
+                <Box display="flex" flexDirection="column">
+                  <Typography variant="body2" color={theme.palette.grey[600]}>
+                    Color
+                  </Typography>
+                  <Box display="flex" flexDirection="row">
+                    <Chip
+                      label={vehicle.color?.toUpperCase()}
+                      size="small"
+                      variant={vehicle.color ? "filled" : "outlined"}
+                      sx={{ fontFamily: "monospace", transform: "uppercase" }}
+                    />
+                  </Box>
                 </Box>
               </Box>
             </Grid>
-            <Grid item sm={12} md={6}>
+            <Grid item sm={12}>
               <Box display="flex" flexDirection="column">
                 <Typography variant="body2" color={theme.palette.grey[600]}>
                   Odometer Stand

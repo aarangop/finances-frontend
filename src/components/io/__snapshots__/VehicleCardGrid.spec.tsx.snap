@@ -1,0 +1,518 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`VehicleCardGrid should render the VehicleCardGrid component 1`] = `
+<div>
+  <div
+    class="MuiContainer-root MuiContainer-maxWidthLg css-c731gg-MuiContainer-root"
+  >
+    <div
+      class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-mhc70k-MuiGrid-root"
+    >
+      <div
+        class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-2 MuiGrid-grid-sm-4 MuiGrid-grid-md-4 css-i45qf8-MuiGrid-root"
+      >
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-bj2p8a-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+              >
+                <div
+                  class="MuiBox-root css-u4p24i"
+                >
+                  <h6
+                    class="MuiTypography-root MuiTypography-h6 css-1juivf6-MuiTypography-root"
+                  >
+                    Car 1
+                  </h6>
+                  <svg
+                    aria-hidden="true"
+                    aria-label="CAR"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-10umb9k-MuiSvgIcon-root"
+                    data-mui-internal-clone-element="true"
+                    data-testid="DirectionsCarIcon"
+                    focusable="false"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16m11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5M5 11l1.5-4.5h11L19 11z"
+                    />
+                  </svg>
+                </div>
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader css-1k9zmmr-MuiTypography-root"
+              >
+                <div
+                  class="MuiBox-root css-1xhj18k"
+                >
+                  <p
+                    class="MuiTypography-root MuiTypography-body2 css-1qfsim1-MuiTypography-root"
+                  >
+                    Toyota Corolla 2020
+                  </p>
+                </div>
+              </span>
+            </div>
+          </div>
+          <div
+            class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+          >
+            <div
+              class="MuiGrid-root MuiGrid-container css-11lq3yg-MuiGrid-root"
+            >
+              <div
+                class="MuiGrid-root MuiGrid-item MuiGrid-grid-sm-12 MuiGrid-grid-md-6 css-vexj24-MuiGrid-root"
+              >
+                <div
+                  class="MuiBox-root css-j7qwjs"
+                >
+                  <p
+                    class="MuiTypography-root MuiTypography-body2 css-fhsa36-MuiTypography-root"
+                  >
+                    License Plate
+                  </p>
+                  <p
+                    class="MuiTypography-root MuiTypography-body1 css-bllpwm-MuiTypography-root"
+                  >
+                    AAA-111
+                  </p>
+                </div>
+              </div>
+              <div
+                class="MuiGrid-root MuiGrid-item MuiGrid-grid-sm-12 MuiGrid-grid-md-6 css-vexj24-MuiGrid-root"
+              >
+                <div
+                  class="MuiBox-root css-j7qwjs"
+                >
+                  <p
+                    class="MuiTypography-root MuiTypography-body2 css-fhsa36-MuiTypography-root"
+                  >
+                    Color
+                  </p>
+                  <div
+                    class="MuiBox-root css-1xhj18k"
+                  >
+                    <div
+                      class="MuiChip-root MuiChip-filled MuiChip-sizeSmall MuiChip-colorDefault MuiChip-filledDefault css-6jfs5-MuiChip-root"
+                    >
+                      <span
+                        class="MuiChip-label MuiChip-labelSmall css-wjsjww-MuiChip-label"
+                      >
+                        WHITE
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="MuiGrid-root MuiGrid-item MuiGrid-grid-sm-12 MuiGrid-grid-md-6 css-vexj24-MuiGrid-root"
+              >
+                <div
+                  class="MuiBox-root css-j7qwjs"
+                >
+                  <p
+                    class="MuiTypography-root MuiTypography-body2 css-fhsa36-MuiTypography-root"
+                  >
+                    Odometer Stand
+                  </p>
+                  <p
+                    class="MuiTypography-root MuiTypography-body1 css-bllpwm-MuiTypography-root"
+                  >
+                    12,950
+                     km
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="MuiCardActions-root MuiCardActions-spacing css-dnrpxu-MuiCardActions-root"
+          >
+            <div
+              class="MuiBox-root css-1dw6sgr"
+            >
+              <div
+                class="MuiBox-root css-i9gxme"
+              >
+                <a
+                  class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeSmall MuiButton-textSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeSmall MuiButton-textSizeSmall MuiButton-colorPrimary css-4wjvfs-MuiButtonBase-root-MuiButton-root"
+                  href="/vehicles/1"
+                  tabindex="0"
+                >
+                  View
+                  <span
+                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                  />
+                </a>
+              </div>
+              <button
+                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-colorError MuiIconButton-sizeMedium css-11xghvv-MuiButtonBase-root-MuiIconButton-root"
+                tabindex="0"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                  data-testid="DeleteIcon"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z"
+                  />
+                </svg>
+                <span
+                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-2 MuiGrid-grid-sm-4 MuiGrid-grid-md-4 css-i45qf8-MuiGrid-root"
+      >
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-bj2p8a-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+              >
+                <div
+                  class="MuiBox-root css-u4p24i"
+                >
+                  <h6
+                    class="MuiTypography-root MuiTypography-h6 css-1juivf6-MuiTypography-root"
+                  >
+                    Car 2
+                  </h6>
+                  <svg
+                    aria-hidden="true"
+                    aria-label="CAR"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-10umb9k-MuiSvgIcon-root"
+                    data-mui-internal-clone-element="true"
+                    data-testid="DirectionsCarIcon"
+                    focusable="false"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16m11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5M5 11l1.5-4.5h11L19 11z"
+                    />
+                  </svg>
+                </div>
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader css-1k9zmmr-MuiTypography-root"
+              >
+                <div
+                  class="MuiBox-root css-1xhj18k"
+                >
+                  <p
+                    class="MuiTypography-root MuiTypography-body2 css-1qfsim1-MuiTypography-root"
+                  >
+                    BMW X3 2014
+                  </p>
+                </div>
+              </span>
+            </div>
+          </div>
+          <div
+            class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+          >
+            <div
+              class="MuiGrid-root MuiGrid-container css-11lq3yg-MuiGrid-root"
+            >
+              <div
+                class="MuiGrid-root MuiGrid-item MuiGrid-grid-sm-12 MuiGrid-grid-md-6 css-vexj24-MuiGrid-root"
+              >
+                <div
+                  class="MuiBox-root css-j7qwjs"
+                >
+                  <p
+                    class="MuiTypography-root MuiTypography-body2 css-fhsa36-MuiTypography-root"
+                  >
+                    License Plate
+                  </p>
+                  <p
+                    class="MuiTypography-root MuiTypography-body1 css-bllpwm-MuiTypography-root"
+                  >
+                    bbb-111
+                  </p>
+                </div>
+              </div>
+              <div
+                class="MuiGrid-root MuiGrid-item MuiGrid-grid-sm-12 MuiGrid-grid-md-6 css-vexj24-MuiGrid-root"
+              >
+                <div
+                  class="MuiBox-root css-j7qwjs"
+                >
+                  <p
+                    class="MuiTypography-root MuiTypography-body2 css-fhsa36-MuiTypography-root"
+                  >
+                    Color
+                  </p>
+                  <div
+                    class="MuiBox-root css-1xhj18k"
+                  >
+                    <div
+                      class="MuiChip-root MuiChip-filled MuiChip-sizeSmall MuiChip-colorDefault MuiChip-filledDefault css-6jfs5-MuiChip-root"
+                    >
+                      <span
+                        class="MuiChip-label MuiChip-labelSmall css-wjsjww-MuiChip-label"
+                      >
+                        RED
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="MuiGrid-root MuiGrid-item MuiGrid-grid-sm-12 MuiGrid-grid-md-6 css-vexj24-MuiGrid-root"
+              >
+                <div
+                  class="MuiBox-root css-j7qwjs"
+                >
+                  <p
+                    class="MuiTypography-root MuiTypography-body2 css-fhsa36-MuiTypography-root"
+                  >
+                    Odometer Stand
+                  </p>
+                  <p
+                    class="MuiTypography-root MuiTypography-body1 css-bllpwm-MuiTypography-root"
+                  >
+                    67,909
+                     km
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="MuiCardActions-root MuiCardActions-spacing css-dnrpxu-MuiCardActions-root"
+          >
+            <div
+              class="MuiBox-root css-1dw6sgr"
+            >
+              <div
+                class="MuiBox-root css-i9gxme"
+              >
+                <a
+                  class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeSmall MuiButton-textSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeSmall MuiButton-textSizeSmall MuiButton-colorPrimary css-4wjvfs-MuiButtonBase-root-MuiButton-root"
+                  href="/vehicles/2"
+                  tabindex="0"
+                >
+                  View
+                  <span
+                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                  />
+                </a>
+              </div>
+              <button
+                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-colorError MuiIconButton-sizeMedium css-11xghvv-MuiButtonBase-root-MuiIconButton-root"
+                tabindex="0"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                  data-testid="DeleteIcon"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z"
+                  />
+                </svg>
+                <span
+                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-2 MuiGrid-grid-sm-4 MuiGrid-grid-md-4 css-i45qf8-MuiGrid-root"
+      >
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-bj2p8a-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+              >
+                <div
+                  class="MuiBox-root css-u4p24i"
+                >
+                  <h6
+                    class="MuiTypography-root MuiTypography-h6 css-1juivf6-MuiTypography-root"
+                  >
+                    Motorcycle 1
+                  </h6>
+                  <svg
+                    aria-hidden="true"
+                    aria-label="MOTORCYCLE"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-10umb9k-MuiSvgIcon-root"
+                    data-mui-internal-clone-element="true"
+                    data-testid="TwoWheelerIcon"
+                    focusable="false"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M20 11c-.18 0-.36.03-.53.05L17.41 9H20V6l-3.72 1.86L13.41 5H9v2h3.59l2 2H11l-4 2-2-2H0v2h4c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4l2 2h3l3.49-6.1 1.01 1.01c-.91.73-1.5 1.84-1.5 3.09 0 2.21 1.79 4 4 4s4-1.79 4-4-1.79-4-4-4M4 17c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2m16 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2"
+                    />
+                  </svg>
+                </div>
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader css-1k9zmmr-MuiTypography-root"
+              >
+                <div
+                  class="MuiBox-root css-1xhj18k"
+                >
+                  <p
+                    class="MuiTypography-root MuiTypography-body2 css-1qfsim1-MuiTypography-root"
+                  >
+                    Royal Enfield Himalayan 400 2021
+                  </p>
+                </div>
+              </span>
+            </div>
+          </div>
+          <div
+            class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+          >
+            <div
+              class="MuiGrid-root MuiGrid-container css-11lq3yg-MuiGrid-root"
+            >
+              <div
+                class="MuiGrid-root MuiGrid-item MuiGrid-grid-sm-12 MuiGrid-grid-md-6 css-vexj24-MuiGrid-root"
+              >
+                <div
+                  class="MuiBox-root css-j7qwjs"
+                >
+                  <p
+                    class="MuiTypography-root MuiTypography-body2 css-fhsa36-MuiTypography-root"
+                  >
+                    License Plate
+                  </p>
+                  <p
+                    class="MuiTypography-root MuiTypography-body1 css-bllpwm-MuiTypography-root"
+                  >
+                    ccc-111
+                  </p>
+                </div>
+              </div>
+              <div
+                class="MuiGrid-root MuiGrid-item MuiGrid-grid-sm-12 MuiGrid-grid-md-6 css-vexj24-MuiGrid-root"
+              >
+                <div
+                  class="MuiBox-root css-j7qwjs"
+                >
+                  <p
+                    class="MuiTypography-root MuiTypography-body2 css-fhsa36-MuiTypography-root"
+                  >
+                    Color
+                  </p>
+                  <div
+                    class="MuiBox-root css-1xhj18k"
+                  >
+                    <div
+                      class="MuiChip-root MuiChip-filled MuiChip-sizeSmall MuiChip-colorDefault MuiChip-filledDefault css-6jfs5-MuiChip-root"
+                    >
+                      <span
+                        class="MuiChip-label MuiChip-labelSmall css-wjsjww-MuiChip-label"
+                      >
+                        BLACK
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="MuiGrid-root MuiGrid-item MuiGrid-grid-sm-12 MuiGrid-grid-md-6 css-vexj24-MuiGrid-root"
+              >
+                <div
+                  class="MuiBox-root css-j7qwjs"
+                >
+                  <p
+                    class="MuiTypography-root MuiTypography-body2 css-fhsa36-MuiTypography-root"
+                  >
+                    Odometer Stand
+                  </p>
+                  <p
+                    class="MuiTypography-root MuiTypography-body1 css-bllpwm-MuiTypography-root"
+                  >
+                    10,560
+                     km
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="MuiCardActions-root MuiCardActions-spacing css-dnrpxu-MuiCardActions-root"
+          >
+            <div
+              class="MuiBox-root css-1dw6sgr"
+            >
+              <div
+                class="MuiBox-root css-i9gxme"
+              >
+                <a
+                  class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeSmall MuiButton-textSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeSmall MuiButton-textSizeSmall MuiButton-colorPrimary css-4wjvfs-MuiButtonBase-root-MuiButton-root"
+                  href="/vehicles/3"
+                  tabindex="0"
+                >
+                  View
+                  <span
+                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                  />
+                </a>
+              </div>
+              <button
+                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-colorError MuiIconButton-sizeMedium css-11xghvv-MuiButtonBase-root-MuiIconButton-root"
+                tabindex="0"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                  data-testid="DeleteIcon"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z"
+                  />
+                </svg>
+                <span
+                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -1,25 +1,15 @@
-import getClient from "@/api/apiClient";
+"use client";
+
 import VehicleCardGrid from "@/components/io/VehicleCardGrid";
 import Main from "@/components/layout/Main";
+import { useGetVehicles } from "@/hooks/vehicle";
 import AddIcon from "@mui/icons-material/Add";
 import { Button, Container } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from "@tanstack/react-query";
 import NextLink from "next/link";
 
 export default function VehiclesPage() {
-  const queryClient = new QueryClient();
-  queryClient.prefetchQuery({
-    queryKey: ["vehicles"],
-    queryFn: () => {
-      const client = getClient();
-      client.GET("/vehicles/");
-    },
-  });
+  const { isSuccess, isLoading, isError, data: vehicles } = useGetVehicles();
 
   return (
     <Main>
@@ -34,9 +24,12 @@ export default function VehiclesPage() {
           My Vehicles
         </Typography>
       </Container>
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <VehicleCardGrid />
-      </HydrationBoundary>
+      <VehicleCardGrid
+        isSuccess={isSuccess}
+        isLoading={isLoading}
+        isError={isError}
+        vehicles={vehicles}
+      />
       <Container>
         <Button
           startIcon={<AddIcon />}

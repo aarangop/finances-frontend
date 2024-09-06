@@ -1,33 +1,45 @@
 "use client";
 
-import getClient from "@/api/apiClient";
+import { components } from "@/api/schema";
 import { Container, Grid, Typography } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import { useRef } from "react";
 import VehicleCard from "../cards/VehicleCard";
+import VehicleCardSkeleton from "../cards/VehicleCardSkeleton";
 
-export default function VehicleCardGrid() {
-  const client = useRef(getClient());
-  const { data, status } = useQuery({
-    queryKey: ["vehicles"],
-    queryFn: () => client.current.GET("/vehicles/"),
-  });
+type Vehicle = components["schemas"]["VehicleSchema"];
 
+export interface VehicleCardGridProps {
+  isLoading: boolean;
+  isError: boolean;
+  isSuccess: boolean;
+  vehicles?: Vehicle[];
+}
+export default function VehicleCardGrid({
+  isLoading,
+  isError,
+  isSuccess,
+  vehicles = [],
+}: VehicleCardGridProps) {
   return (
     <Container sx={{ display: "flex" }}>
-      {status === "pending" && <Typography variant="h6">Loading...</Typography>}
-      {status === "error" && (
+      {isError && (
         <Typography variant="h6" color="error">
           Error loading vehicles
         </Typography>
       )}
-      {status === "success" && (
+      {!isError && (
         <Grid container spacing={2} sx={{}}>
-          {data.data?.map((vehicle) => (
-            <Grid item key={vehicle.id} xs={2} sm={4} md={4}>
-              <VehicleCard vehicle={vehicle} />
-            </Grid>
-          ))}
+          {isSuccess &&
+            vehicles.map((vehicle) => (
+              <Grid item key={vehicle.id} xs={2} sm={4} md={4}>
+                <VehicleCard vehicle={vehicle} />
+              </Grid>
+            ))}
+          {isLoading &&
+            Array.from({ length: 2 }).map((_, index) => (
+              <Grid item key={index} xs={2} sm={4} md={4}>
+                <VehicleCardSkeleton />
+              </Grid>
+            ))}
         </Grid>
       )}
     </Container>
