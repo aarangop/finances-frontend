@@ -10,6 +10,8 @@ import "dayjs/locale/es";
 import { SnackbarProvider } from "notistack";
 import { ReactNode, useMemo, useState } from "react";
 import { ThemeContext, useThemeContext } from "../context/themeContext";
+import DrawerControlsStateProvider from "./DrawerControlsStateProvider";
+import DrawerStateProvider from "./DrawerStateProvider";
 
 export function ThemeProviderWrapper({ children }: { children: ReactNode }) {
   const [mode, setMode] = useState<PaletteMode>("dark");
@@ -51,9 +53,16 @@ export default function Providers({ children }: { children: ReactNode }) {
     <ThemeProviderWrapper>
       <UnthemedProviders>
         <SnackbarProvider maxSnack={3}>
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-            {children}
-          </LocalizationProvider>
+          <DrawerControlsStateProvider>
+            <DrawerStateProvider>
+              <LocalizationProvider
+                dateAdapter={AdapterDayjs}
+                adapterLocale="es"
+              >
+                {children}
+              </LocalizationProvider>
+            </DrawerStateProvider>
+          </DrawerControlsStateProvider>
         </SnackbarProvider>
       </UnthemedProviders>
     </ThemeProviderWrapper>

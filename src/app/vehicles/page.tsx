@@ -1,7 +1,7 @@
 "use client";
 
-import VehicleCardGrid from "@/components/io/VehicleCardGrid";
 import Main from "@/components/layout/Main";
+import VehicleCardGrid from "@/components/layout/VehicleCardGrid";
 import { useGetVehicles } from "@/hooks/vehicle";
 import AddIcon from "@mui/icons-material/Add";
 import { Button, Container } from "@mui/material";

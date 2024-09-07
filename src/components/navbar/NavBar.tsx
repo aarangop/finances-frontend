@@ -1,13 +1,43 @@
-import { Box, Button, Container, Toolbar, Typography } from "@mui/material";
+"use client";
+
+import {
+  Box,
+  Button,
+  Container,
+  IconButton,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import AppBar from "@mui/material/AppBar";
+import { GridMenuIcon } from "@mui/x-data-grid";
 import NextLink from "next/link";
+import { useToggleDrawer } from "../context/drawerContext";
+import { useDrawerControlsContext } from "../context/drawerControlsContext";
 import ThemeToggleSwitch from "./ThemeToggleSwitch";
 
+interface NavBarProps {
+  leftDrawerDisabled?: boolean;
+  leftDrawerVisible?: boolean;
+}
+
 export default function NavBar() {
+  const drawerControlsContext = useDrawerControlsContext();
+  const toggleLeftDrawer = useToggleDrawer("left");
+
   return (
     <AppBar position="static">
       <Container>
-        <Toolbar disableGutters>
+        <Toolbar sx={{ width: "100%" }}>
+          {drawerControlsContext.left.isVisible && (
+            <IconButton
+              disabled={drawerControlsContext.left.isDisabled}
+              color="inherit"
+              sx={{ mr: 1 }}
+              onClick={toggleLeftDrawer}
+            >
+              <GridMenuIcon />
+            </IconButton>
+          )}
           <Typography variant="h6" sx={{ mr: "1rem" }}>
             My Finances
           </Typography>

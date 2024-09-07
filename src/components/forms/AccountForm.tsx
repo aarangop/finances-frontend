@@ -1,7 +1,7 @@
 "use client";
 
 import { components } from "@/api/schema";
-import ValidationFeedback from "@/components/io/ValidationFeedback";
+import ValidationFeedback from "@/components/forms/ValidationFeedback";
 import CurrencySelect from "@/components/select/CurrencySelect";
 import { useCreateAccount } from "@/hooks/account";
 import DeleteIcon from "@mui/icons-material/Delete";

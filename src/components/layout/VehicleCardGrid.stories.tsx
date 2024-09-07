@@ -1,9 +1,9 @@
 import { components } from "@/api/schema";
-import VehicleCardGrid from "@/components/io/VehicleCardGrid";
+import VehicleCardGrid from "@/components/layout/VehicleCardGrid";
 import { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
-  title: "io/VehicleCardGrid",
+  title: "layout/VehicleCardGrid",
   component: VehicleCardGrid,
   tags: ["autodocs"],
 } satisfies Meta<typeof VehicleCardGrid>;
