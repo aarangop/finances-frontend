@@ -1,8 +1,6 @@
 import { components } from "@/api/schema";
 import server, { apiPath } from "@/mocks/node";
-import getOpenApiClient from "@/utils/openApiClient";
 import { renderHook } from "@/utils/testing";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { http, HttpResponse } from "msw";
 import { act } from "react";
 import { useCreateCarTrip, useUpdateTrip } from "./carTrip";
@@ -22,7 +20,7 @@ const vehicle: Vehicle = {
   vehicle_type: "car",
 };
 
-const tripInput: CarTripCreate = {
+const newTrip: CarTripCreate = {
   origin: "Medellin",
   destination: "Bogota",
   start_date: "2024/08/22",
@@ -37,17 +35,10 @@ const tripInput: CarTripCreate = {
   vehicle: vehicle,
 };
 
-const tripOutput: CarTrip = {
-  ...tripInput,
+const existingTrip: CarTrip = {
+  ...newTrip,
   id: 1,
 };
-
-const queryClient = new QueryClient();
-
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-);
-const client = getOpenApiClient();
 
 describe("useCreateTrip", () => {
   beforeEach(() => {
@@ -59,18 +50,10 @@ describe("useCreateTrip", () => {
     );
   });
 
-  it("should call the create trip API and return the response data", async () => {
-    const onSuccessCallback = jest.fn();
-    const onErrorCallback = jest.fn();
-
-    // (client.POST as jest.Mock).mockResolvedValueOnce({ data: tripOutput });
-
-    const { result } = renderHook(
-      () => useCreateCarTrip({ onSuccessCallback, onErrorCallback }),
-      { wrapper }
-    );
+  it("should return the response data", async () => {
+    const { result } = renderHook(() => useCreateCarTrip());
     const tripData: CarTripCreate = {
-      ...tripInput,
+      ...newTrip,
       origin: "Cali",
       destination: "Cartagena",
     };
@@ -78,19 +61,39 @@ describe("useCreateTrip", () => {
       ...tripData,
       id: 1,
     };
-    await result.current.mutateAsync(tripData);
-
-    // Ensure the onSuccess callback was called with the correct data
-    expect(onSuccessCallback).toHaveBeenCalledWith(
-      expectedTripData,
-      tripData,
-      undefined
-    );
-    // Ensure the onError callback was not called
-    expect(onErrorCallback).not.toHaveBeenCalled();
+    const receivedData = await result.current.mutateAsync(tripData);
+    expect(receivedData).toEqual(expectedTripData);
   });
 
-  it("should call the error callback when the create trip API throws an error", async () => {
+  it("should call the success callback when the create trip mutation is successful", async () => {
+    // Arrange
+    const onSuccessCallback = jest.fn();
+    const { result } = renderHook(() =>
+      useCreateCarTrip({ onSuccessCallback })
+    );
+
+    // Act: Perform the mutation
+    await result.current.mutateAsync(newTrip);
+
+    // Assert
+    expect(onSuccessCallback).toHaveBeenCalledWith(
+      existingTrip,
+      newTrip,
+      undefined
+    );
+  });
+  it("should not call the error callback when the create trip mutation is successful", async () => {
+    // Arrange
+    const onErrorCallback = jest.fn();
+    const { result } = renderHook(() => useCreateCarTrip({ onErrorCallback }));
+
+    // Act: Perform the mutation
+    await result.current.mutateAsync(newTrip);
+
+    // Assert
+    expect(onErrorCallback).not.toHaveBeenCalled();
+  });
+  it("should call the error callback when the create trip mutation throws an error", async () => {
     // Arrange
     // Mock error response from server
     server.use(
@@ -98,25 +101,39 @@ describe("useCreateTrip", () => {
         throw HttpResponse.error();
       })
     );
-    // Mock callbacks
-    const onSuccessCallback = jest.fn();
     const onErrorCallback = jest.fn();
     // Render hook
-    const { result } = renderHook(
-      () => useCreateCarTrip({ onSuccessCallback, onErrorCallback }),
-      { wrapper }
+    const { result } = renderHook(() => useCreateCarTrip({ onErrorCallback }));
+
+    // Act: Try to create a trip and expect it to fail
+    await expect(() => result.current.mutateAsync(newTrip)).rejects.toThrow();
+
+    // Assert
+    expect(onErrorCallback).toHaveBeenCalledWith(
+      expect.any(Error),
+      newTrip,
+      undefined
+    );
+  });
+  it("should not call the success callback when the create trip mutation fails", () => {
+    // Arrange
+    // Mock error response from server
+    server.use(
+      http.post(apiPath("/trips/car"), async () => {
+        throw HttpResponse.error();
+      })
+    );
+    const onSuccessCallback = jest.fn();
+    // Render hook
+    const { result } = renderHook(() =>
+      useCreateCarTrip({ onSuccessCallback })
     );
 
     // Act: Try to create a trip and expect it to fail
-    await expect(() => result.current.mutateAsync(tripInput)).rejects.toThrow();
+    expect(() => result.current.mutateAsync(newTrip)).rejects.toThrow();
 
     // Assert
     expect(onSuccessCallback).not.toHaveBeenCalled();
-    expect(onErrorCallback).toHaveBeenCalledWith(
-      expect.any(Error),
-      tripInput,
-      undefined
-    );
   });
 });
 
@@ -132,9 +149,9 @@ describe("useUpdateTrip", () => {
   });
 
   it("should return the response data", async () => {
-    const { result } = renderHook(() => useUpdateTrip(), { wrapper });
+    const { result } = renderHook(() => useUpdateTrip());
     const tripData = {
-      ...tripOutput,
+      ...existingTrip,
       id: 1,
       origin: "Cali",
       destination: "Barrancabermeja",
@@ -149,26 +166,79 @@ describe("useUpdateTrip", () => {
     expect(mutationResult).toEqual(tripData);
   });
 
-  it("should call the error callback when the update trip API throws an error", async () => {
+  it("should call the success callback when the update trip API is successful", async () => {
+    // Arrange
     const onSuccessCallback = jest.fn();
-    const onErrorCallback = jest.fn();
-    const mockError = new Error("API error");
+    const tripData = {
+      ...existingTrip,
+      id: 1,
+      origin: "Cali",
+      destination: "Barrancabermeja",
+    };
+    const { result } = renderHook(() => useUpdateTrip({ onSuccessCallback }));
 
-    (client.PUT as jest.Mock).mockRejectedValueOnce(mockError);
+    // Act: Perform the mutation
+    await result.current.mutateAsync(tripData);
 
-    const { result } = renderHook(
-      () => useUpdateTrip({ onSuccessCallback, onErrorCallback }),
-      { wrapper }
-    );
-
-    await expect(result.current.mutateAsync(tripOutput)).rejects.toThrow(
-      mockError
-    );
-    expect(onSuccessCallback).not.toHaveBeenCalled();
-    expect(onErrorCallback).toHaveBeenCalledWith(
-      mockError,
-      tripOutput,
+    // Assert
+    expect(onSuccessCallback).toHaveBeenCalledWith(
+      tripData,
+      tripData,
       undefined
     );
+  });
+
+  it("should not call the error callback when the update trip API is successful", async () => {
+    // Arrange
+    const onErrorCallback = jest.fn();
+    const { result } = renderHook(() => useUpdateTrip({ onErrorCallback }));
+
+    // Act: Perform the mutation
+    await result.current.mutateAsync(existingTrip);
+
+    // Assert
+    expect(onErrorCallback).not.toHaveBeenCalled();
+  });
+
+  it("should call the error callback when the update trip API throws an error", async () => {
+    // Arrange
+    // Mock error response from server
+    server.use(
+      http.put(apiPath("/trips/car/:trip_id"), async () => {
+        throw HttpResponse.error();
+      })
+    );
+    const onErrorCallback = jest.fn();
+    // Render hook
+    const { result } = renderHook(() => useUpdateTrip({ onErrorCallback }));
+
+    // Act: Try to create a trip and expect it to fail
+    await expect(result.current.mutateAsync(existingTrip)).rejects.toThrow();
+
+    // Assert
+    expect(onErrorCallback).toHaveBeenCalledWith(
+      expect.any(Error),
+      existingTrip,
+      undefined
+    );
+  });
+
+  it("should not call the success callback when the update trip API fails", () => {
+    // Arrange
+    // Mock error response from server
+    server.use(
+      http.put(apiPath("/trips/car/:trip_id"), async () => {
+        throw HttpResponse.error();
+      })
+    );
+    const onSuccessCallback = jest.fn();
+    // Render hook
+    const { result } = renderHook(() => useUpdateTrip({ onSuccessCallback }));
+
+    // Act: Try to create a trip and expect it to fail
+    expect(() => result.current.mutateAsync(existingTrip)).rejects.toThrow();
+
+    // Assert
+    expect(onSuccessCallback).not.toHaveBeenCalled();
   });
 });

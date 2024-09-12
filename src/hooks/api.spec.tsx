@@ -1,5 +1,4 @@
-import { renderHook as renderHookWithProviders } from "@/utils/testUtils";
-import { renderHook } from "@testing-library/react";
+import { renderHook as renderHookWithProviders } from "@/utils/testing";
 import { useApi, useOpenApiClient } from "./api";
 
 describe("useOpenApiClient hook", () => {
@@ -11,7 +10,7 @@ describe("useOpenApiClient hook", () => {
   });
   it("should throw error if used outside of ApiClientsProvider", () => {
     expect(() => {
-      renderHook(() => useOpenApiClient());
+      renderHookWithProviders(() => useOpenApiClient());
     }).toThrow("useOpenApiClient must be used within an ApiClientsProvider");
   });
 });
@@ -24,7 +23,7 @@ describe("useApi hook", () => {
   });
   it("should throw error if used outside of ApiClientsProvider", () => {
     expect(() => {
-      renderHook(() => useApi());
+      renderHookWithProviders(() => useApi());
     }).toThrow("useOpenApiClient must be used within an ApiClientsProvider");
   });
 });
