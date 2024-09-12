@@ -1,29 +1,33 @@
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import { Button, Drawer, ListItem } from "@mui/material";
-import NextLink from "next/link";
-import { useToggleDrawer } from "../context/drawerContext";
+import { useToggleDrawer } from "../../context/DrawerContext";
+import NavigationButton from "../buttons/NavigationButton";
 
 interface FinancesSidebarProps {
   isOpen?: boolean;
   anchor?: "left" | "right";
 }
+
 export default function FinancesSidebar({
   isOpen = false,
   anchor = "left",
 }: FinancesSidebarProps) {
   const toggleSidebar = useToggleDrawer(anchor);
   return (
-    <Drawer open={isOpen} anchor={anchor} onClose={toggleSidebar}>
+    <Drawer
+      open={isOpen}
+      anchor={anchor}
+      onClose={toggleSidebar}
+      variant="persistent"
+    >
       <ListItem>
-        <Button
-          fullWidth
-          startIcon={<DashboardIcon />}
-          component={NextLink}
+        <NavigationButton
+          text="Dashboard"
+          icon={<DashboardIcon />}
           href="/finances/dashboard"
-        >
-          Dashboard
-        </Button>
+          selected={true}
+        />
       </ListItem>
       <ListItem>
         <Button

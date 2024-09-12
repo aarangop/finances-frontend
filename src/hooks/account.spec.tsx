@@ -1,7 +1,8 @@
 import { components } from "@/api/schema";
 import server, { apiPath } from "@/mocks/node";
+import { renderHook } from "@/utils/testing";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { renderHook, waitFor } from "@testing-library/react";
+import { waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import { useCreateAccount, useGetAccounts } from "./account";
 
@@ -28,11 +29,11 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
 describe("useGetAccount hook", () => {
   it("should return the account data", async () => {
     server.use(
-      http.get<any, Account[], any, string>(apiPath("/accounts/"), async () => {
+      http.get<any, Account[], any, "/accounts/">("/accounts/", async () => {
         return HttpResponse.json<Account[]>([account]);
       })
     );
-    const { result } = renderHook(() => useGetAccounts(), { wrapper });
+    const { result } = renderHook(() => useGetAccounts());
     await waitFor(() => expect(result.current.status).toBe("success"));
 
     expect(result.current.data).toEqual([account]);

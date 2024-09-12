@@ -1,4 +1,4 @@
-import ThemeToggleSwitch from "@/components/navbar/ThemeToggleSwitch";
+import ThemeToggleSwitch from "@/components/buttons/ThemeToggleSwitch";
 import { fireEvent, render, screen } from "@testing-library/react";
 import Providers from "../providers/Providers";
 

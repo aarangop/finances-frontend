@@ -1,31 +1,25 @@
 import { components } from "@/api/schema";
 import VehicleAutocomplete from "@/components/autocomplete/VehicleAutocomplete";
 import server, { apiPath } from "@/mocks/node";
-import { useQuery } from "@tanstack/react-query";
-import {
-  act,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react";
+import { render } from "@/utils/testUtils";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
 import { ControllerRenderProps } from "react-hook-form";
 
-// Mock useQuery from React Query
-jest.mock("@tanstack/react-query", () => ({
-  useQuery: jest.fn(),
-}));
+type Vehicle = components["schemas"]["VehicleSchema"];
 
-// Mocking Vehicle Data
-const mockVehicles = [
+const mockVehicles: Vehicle[] = [
   {
     id: 1,
     name: "Car 1",
     make: "Toyota",
     model: "Corolla",
     year: 2020,
+    odometer: 18391,
+    license_plate: "aaa-111",
+    vehicle_type: "car",
+    color: "white",
   },
   {
     id: 2,
@@ -33,6 +27,10 @@ const mockVehicles = [
     make: "Honda",
     model: "Civic",
     year: 2019,
+    odometer: 8912,
+    license_plate: "abc-123",
+    vehicle_type: "car",
+    color: "blue",
   },
 ];
 
@@ -47,14 +45,16 @@ const mockField: ControllerRenderProps<any> = {
 
 describe("VehicleAutocomplete", () => {
   beforeEach(() => {
-    (useQuery as jest.Mock).mockReturnValue({
-      data: { data: mockVehicles },
-      isPending: false,
-    });
+    server.use(
+      http.get<any, any, Vehicle[], string>(apiPath("/vehicles/"), () => {
+        return HttpResponse.json<Vehicle[]>(mockVehicles);
+      })
+    );
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    jest.clearAllMocks(); // Clears all mock functions
+    server.resetHandlers(); // Reset handlers after every test
   });
 
   test("renders with a label", () => {
@@ -68,12 +68,8 @@ describe("VehicleAutocomplete", () => {
     expect(screen.getByLabelText("Select Vehicle")).toBeInTheDocument();
   });
 
-  test("renders loading state", () => {
-    (useQuery as jest.Mock).mockReturnValue({
-      data: undefined,
-      isPending: true,
-    });
-
+  test("renders loading state", async () => {
+    // Render the component
     render(
       <VehicleAutocomplete
         label="Select Vehicle"
@@ -82,7 +78,13 @@ describe("VehicleAutocomplete", () => {
       />
     );
 
+    // Check for loading state without any delay
     expect(screen.getByRole("progressbar")).toBeInTheDocument();
+
+    // Wait for the progressbar to disappear after the vehicles are fetched
+    await waitFor(() => {
+      expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
+    });
   });
 
   test("displays options when typing", async () => {
@@ -159,66 +161,5 @@ describe("VehicleAutocomplete", () => {
     fireEvent.change(input, { target: { value: "" } });
 
     expect(mockOnVehicleSelect).not.toHaveBeenCalled();
-  });
-});
-
-type Vehicle = components["schemas"]["VehicleSchema"];
-
-describe("VehicleAutocomplete integration tests", () => {
-  beforeAll(() => {
-    server.use(
-      http.get<any, Vehicle[], any, string>(apiPath("/vehicles/"), async () => {
-        return HttpResponse.json<Vehicle[]>([
-          {
-            id: 1,
-            name: "Carolita",
-            make: "Toyota",
-            model: "Corolla",
-            year: 2020,
-            odometer: 0,
-            license_plate: "aaa-111",
-            vehicle_type: "car",
-          },
-          {
-            id: 2,
-            name: "Marcelita",
-            make: "Honda",
-            model: "Civic",
-            year: 2019,
-            odometer: 0,
-            license_plate: "bbb-222",
-            vehicle_type: "car",
-          },
-        ]);
-      })
-    );
-  });
-
-  it("renders list of vehicles from the API", async () => {
-    // Render the VehicleAutocomplete component
-    const onVehicleSelect = jest.fn();
-    render(
-      <VehicleAutocomplete
-        onVehicleSelect={onVehicleSelect}
-        field={mockField}
-        label="Select Vehicle"
-      />
-    );
-
-    const openButton = screen.getByRole("button", { name: /open/i });
-
-    await act(async () => {
-      userEvent.click(openButton);
-    });
-
-    // Wait for the vehicles to load
-    await waitFor(async () => {
-      expect(
-        screen.getByText("Carolita - Toyota Corolla 2020")
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText("Marcelita - Honda Civic 2019")
-      ).toBeInTheDocument();
-    });
   });
 });

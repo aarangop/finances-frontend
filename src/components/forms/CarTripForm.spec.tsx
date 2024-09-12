@@ -1,6 +1,6 @@
 import { components } from "@/api/schema";
 import server, { apiPath } from "@/mocks/node";
-import { render } from "@/testUtils";
+import { render } from "@/utils/testing";
 import { act, fireEvent, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
@@ -30,6 +30,7 @@ const mockVehicles: Vehicle[] = [
     vehicle_type: "car",
   },
 ];
+
 describe("Car Trip Form UI", () => {
   it("Renders empty origin field for new car trip", () => {
     render(<CarTripForm />);

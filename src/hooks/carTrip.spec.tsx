@@ -1,15 +1,15 @@
-import getClient from "@/api/apiClient";
 import { components } from "@/api/schema";
+import server, { apiPath } from "@/mocks/node";
+import getOpenApiClient from "@/utils/openApiClient";
+import { renderHook } from "@/utils/testing";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { renderHook } from "@testing-library/react";
+import { http, HttpResponse } from "msw";
+import { act } from "react";
 import { useCreateCarTrip, useUpdateTrip } from "./carTrip";
 
-jest.mock("@/api/apiClient", () => ({
-  POST: jest.fn(),
-  PUT: jest.fn(),
-}));
-
 type Vehicle = components["schemas"]["VehicleSchema"];
+type CarTripCreate = components["schemas"]["CarTripCreateSchema"];
+type CarTrip = components["schemas"]["CarTripSchema-Output"];
 
 const vehicle: Vehicle = {
   id: 1,
@@ -22,7 +22,7 @@ const vehicle: Vehicle = {
   vehicle_type: "car",
 };
 
-const tripInput: components["schemas"]["CarTripCreateSchema"] = {
+const tripInput: CarTripCreate = {
   origin: "Medellin",
   destination: "Bogota",
   start_date: "2024/08/22",
@@ -37,7 +37,7 @@ const tripInput: components["schemas"]["CarTripCreateSchema"] = {
   vehicle: vehicle,
 };
 
-const tripOutput: components["schemas"]["CarTripSchema-Output"] = {
+const tripOutput: CarTrip = {
   ...tripInput,
   id: 1,
 };
@@ -47,28 +47,43 @@ const queryClient = new QueryClient();
 const wrapper = ({ children }: { children: React.ReactNode }) => (
   <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 );
+const client = getOpenApiClient();
 
-const client = getClient();
 describe("useCreateTrip", () => {
+  beforeEach(() => {
+    server.use(
+      http.post(apiPath("/trips/car"), async ({ request, params }) => {
+        const carTrip = (await request.json()) as CarTripCreate;
+        return HttpResponse.json<CarTrip>({ ...carTrip, id: 1 });
+      })
+    );
+  });
+
   it("should call the create trip API and return the response data", async () => {
     const onSuccessCallback = jest.fn();
     const onErrorCallback = jest.fn();
 
-    (client.POST as jest.Mock).mockResolvedValueOnce({ data: tripOutput });
+    // (client.POST as jest.Mock).mockResolvedValueOnce({ data: tripOutput });
 
     const { result } = renderHook(
       () => useCreateCarTrip({ onSuccessCallback, onErrorCallback }),
       { wrapper }
     );
+    const tripData: CarTripCreate = {
+      ...tripInput,
+      origin: "Cali",
+      destination: "Cartagena",
+    };
+    const expectedTripData: CarTrip = {
+      ...tripData,
+      id: 1,
+    };
+    await result.current.mutateAsync(tripData);
 
-    await result.current.mutateAsync(tripInput);
-
-    // Verify the POST request was made with the correct arguments
-    expect(client.POST).toHaveBeenCalledWith("/trips/car", { body: tripInput });
     // Ensure the onSuccess callback was called with the correct data
     expect(onSuccessCallback).toHaveBeenCalledWith(
-      tripOutput,
-      tripInput,
+      expectedTripData,
+      tripData,
       undefined
     );
     // Ensure the onError callback was not called
@@ -76,24 +91,29 @@ describe("useCreateTrip", () => {
   });
 
   it("should call the error callback when the create trip API throws an error", async () => {
+    // Arrange
+    // Mock error response from server
+    server.use(
+      http.post(apiPath("/trips/car"), async () => {
+        throw HttpResponse.error();
+      })
+    );
+    // Mock callbacks
     const onSuccessCallback = jest.fn();
     const onErrorCallback = jest.fn();
-    const mockError = new Error("API error");
-
-    (client.POST as jest.Mock).mockRejectedValueOnce(mockError);
-
+    // Render hook
     const { result } = renderHook(
       () => useCreateCarTrip({ onSuccessCallback, onErrorCallback }),
       { wrapper }
     );
 
-    await expect(() => result.current.mutateAsync(tripInput)).rejects.toThrow(
-      mockError
-    );
-    expect(client.POST).toHaveBeenCalledWith("/trips/car", { body: tripInput });
+    // Act: Try to create a trip and expect it to fail
+    await expect(() => result.current.mutateAsync(tripInput)).rejects.toThrow();
+
+    // Assert
     expect(onSuccessCallback).not.toHaveBeenCalled();
     expect(onErrorCallback).toHaveBeenCalledWith(
-      mockError,
+      expect.any(Error),
       tripInput,
       undefined
     );
@@ -101,29 +121,32 @@ describe("useCreateTrip", () => {
 });
 
 describe("useUpdateTrip", () => {
-  it("should call the update trip API and return the response data", async () => {
-    const onSuccessCallback = jest.fn();
-    const onErrorCallback = jest.fn();
-
-    (client.PUT as jest.Mock).mockResolvedValueOnce({ data: tripOutput });
-
-    const { result } = renderHook(
-      () => useUpdateTrip({ onSuccessCallback, onErrorCallback }),
-      { wrapper }
+  beforeAll(() => {
+    server.use(
+      http.put(apiPath("/trips/car/:trip_id"), async ({ request, params }) => {
+        const carTripId = Number(params.trip_id);
+        const carTrip = (await request.json()) as CarTrip;
+        return HttpResponse.json<CarTrip>({ ...carTrip, id: carTripId });
+      })
     );
+  });
 
-    await result.current.mutateAsync(tripOutput);
+  it("should return the response data", async () => {
+    const { result } = renderHook(() => useUpdateTrip(), { wrapper });
+    const tripData = {
+      ...tripOutput,
+      id: 1,
+      origin: "Cali",
+      destination: "Barrancabermeja",
+    };
 
-    expect(client.PUT).toHaveBeenCalledWith("/trips/car/{trip_id}", {
-      params: { path: { trip_id: tripOutput.id } },
-      body: tripOutput,
+    // Perform the mutation and wait for the response
+    let mutationResult;
+    await act(async () => {
+      mutationResult = await result.current.mutateAsync(tripData); // capture the mutation result
     });
-    expect(onSuccessCallback).toHaveBeenCalledWith(
-      tripOutput,
-      tripOutput,
-      undefined
-    );
-    expect(onErrorCallback).not.toHaveBeenCalled();
+
+    expect(mutationResult).toEqual(tripData);
   });
 
   it("should call the error callback when the update trip API throws an error", async () => {

@@ -5,9 +5,9 @@ beforeAll(() => {
   // Enable API mocking before all the tests.
   // Initialize the client that'll be used in the tests and provide the fetch function.
   server.listen({
-    // onUnhandledRequest: (req) => {
-    //   console.error(`Unhandled request: ${req.method} ${req.url}`);
-    // },
+    onUnhandledRequest: (req) => {
+      console.error(`Unhandled request: ${req.method} ${req.url}`);
+    },
   });
 });
 

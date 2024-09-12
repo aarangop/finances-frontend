@@ -29,7 +29,7 @@
     "@types/iban": "^0.0.35",
     "dayjs": "^1.11.12",
     "iban": "^0.0.14",
-    "next": "^14.2.6",
+    "next": "^14.2.9",
     "next-router-mock": "^0.9.13",
     "notistack": "^3.0.1",
     "openapi-fetch": "^0.10.5",

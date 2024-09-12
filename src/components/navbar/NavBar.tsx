@@ -1,5 +1,7 @@
 "use client";
 
+import { useDrawerControlsContext } from "@/context/DrawerControlsContext";
+import { useToggleDrawer } from "@/hooks/drawers";
 import {
   Box,
   Button,
@@ -11,14 +13,8 @@ import {
 import AppBar from "@mui/material/AppBar";
 import { GridMenuIcon } from "@mui/x-data-grid";
 import NextLink from "next/link";
-import { useToggleDrawer } from "../context/drawerContext";
-import { useDrawerControlsContext } from "../context/drawerControlsContext";
-import ThemeToggleSwitch from "./ThemeToggleSwitch";
-
-interface NavBarProps {
-  leftDrawerDisabled?: boolean;
-  leftDrawerVisible?: boolean;
-}
+import NavigationButton from "../buttons/NavigationButton";
+import ThemeToggleSwitch from "../buttons/ThemeToggleSwitch";
 
 export default function NavBar() {
   const drawerControlsContext = useDrawerControlsContext();
@@ -51,9 +47,7 @@ export default function NavBar() {
             }}
             gap={2}
           >
-            <Button href="/" component={NextLink} passHref color="inherit">
-              Home
-            </Button>
+            <NavigationButton href="/" text="Home" selected={true} />
             <Button
               href="/finances"
               component={NextLink}

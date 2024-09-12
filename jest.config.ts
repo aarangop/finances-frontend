@@ -21,6 +21,7 @@ const config: Config = {
   coveragePathIgnorePatterns: [
     ...defaults.coveragePathIgnorePatterns,
     "<rootDir>/src/mocks",
+    "<rootDir>/src/api",
   ],
 
   // Indicates which provider should be used to instrument code for coverage

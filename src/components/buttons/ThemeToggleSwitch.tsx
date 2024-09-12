@@ -1,11 +1,15 @@
 "use client";
 
+import { useThemeModeContext } from "@/context/ThemeModeContext";
 import { DarkMode, LightMode } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
-import { useThemeContext } from "../context/themeContext";
+import { useEffect } from "react";
 
 export default function ThemeToggleSwitch() {
-  const { mode, toggleMode: setMode } = useThemeContext();
+  const { mode, toggleMode: setMode } = useThemeModeContext();
+  useEffect(() => {
+    console.log(mode);
+  }, [mode]);
   return (
     <IconButton onClick={setMode}>
       {mode === "light" ? (

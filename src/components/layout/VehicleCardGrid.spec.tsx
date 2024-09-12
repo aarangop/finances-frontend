@@ -1,5 +1,5 @@
 import { components } from "@/api/schema";
-import { render } from "@/testUtils";
+import { render } from "@/utils/testing";
 import VehicleCardGrid from "./VehicleCardGrid";
 
 type Vehicle = components["schemas"]["VehicleSchema"];

@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { DrawerControlsStateType } from "../context/drawerControlsContext";
+import { DrawerControlsStateType } from "../../context/DrawerControlsContext";
 import DrawerControlsStateProvider from "../providers/DrawerControlsStateProvider";
 import NavBar from "./NavBar";
 

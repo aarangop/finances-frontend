@@ -1,33 +1,27 @@
 "use client";
 
-import { getQueryClient } from "@/api/queryClient";
-import { createTheme, PaletteMode, ThemeProvider } from "@mui/material";
+import getOpenApiClient from "@/utils/openApiClient";
+import { getQueryClient } from "@/utils/queryClient";
+import { createTheme, ThemeProvider } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "dayjs/locale/es";
 import { SnackbarProvider } from "notistack";
-import { ReactNode, useMemo, useState } from "react";
-import { ThemeContext, useThemeContext } from "../context/themeContext";
+import { ReactNode, useMemo } from "react";
+import { useThemeModeContext } from "../../context/ThemeModeContext";
 import DrawerControlsStateProvider from "./DrawerControlsStateProvider";
 import DrawerStateProvider from "./DrawerStateProvider";
-
-export function ThemeProviderWrapper({ children }: { children: ReactNode }) {
-  const [mode, setMode] = useState<PaletteMode>("dark");
-  const toggleMode = () =>
-    setMode((previousMode) => (previousMode === "dark" ? "light" : "dark"));
-
-  const value = useMemo(() => ({ mode, toggleMode }), [mode]);
-  return (
-    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
-  );
-}
+import OpenApiClientProvider from "./OpenApiClientProvider";
+import ThemeModeProvider from "./ThemeModeProvider";
 
 function UnthemedProviders({ children }: { children: ReactNode }) {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
   const queryClient = getQueryClient();
+  const openApiClient = getOpenApiClient({ baseUrl });
 
-  const { mode } = useThemeContext();
+  const { mode } = useThemeModeContext();
   const theme = useMemo(() => {
     return createTheme({
       palette: {
@@ -42,7 +36,20 @@ function UnthemedProviders({ children }: { children: ReactNode }) {
         {process.env.NODE_ENV === "development" && (
           <ReactQueryDevtools initialIsOpen={false} />
         )}
-        {children}
+        <OpenApiClientProvider client={openApiClient}>
+          <SnackbarProvider maxSnack={3}>
+            <DrawerControlsStateProvider>
+              <DrawerStateProvider>
+                <LocalizationProvider
+                  dateAdapter={AdapterDayjs}
+                  adapterLocale="es"
+                >
+                  {children}
+                </LocalizationProvider>
+              </DrawerStateProvider>
+            </DrawerControlsStateProvider>
+          </SnackbarProvider>
+        </OpenApiClientProvider>
       </QueryClientProvider>
     </ThemeProvider>
   );
@@ -50,21 +57,8 @@ function UnthemedProviders({ children }: { children: ReactNode }) {
 
 export default function Providers({ children }: { children: ReactNode }) {
   return (
-    <ThemeProviderWrapper>
-      <UnthemedProviders>
-        <SnackbarProvider maxSnack={3}>
-          <DrawerControlsStateProvider>
-            <DrawerStateProvider>
-              <LocalizationProvider
-                dateAdapter={AdapterDayjs}
-                adapterLocale="es"
-              >
-                {children}
-              </LocalizationProvider>
-            </DrawerStateProvider>
-          </DrawerControlsStateProvider>
-        </SnackbarProvider>
-      </UnthemedProviders>
-    </ThemeProviderWrapper>
+    <ThemeModeProvider>
+      <UnthemedProviders>{children}</UnthemedProviders>
+    </ThemeModeProvider>
   );
 }

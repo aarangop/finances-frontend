@@ -1,9 +1,8 @@
-import client from "@/api/apiClient";
-import { getQueryClient } from "@/api/queryClient";
 import { components } from "@/api/schema";
+import { useOpenApiClient } from "@/hooks/api";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 type Vehicle = components["schemas"]["VehicleSchema"];
@@ -17,11 +16,12 @@ export default function DeleteVehicleDialog({
   open: boolean;
   handleDialogClose: () => void;
 }) {
-  const queryClient = getQueryClient();
+  const queryClient = useQueryClient();
+  const openApiClient = useOpenApiClient();
   const router = useRouter();
   const deleteMutation = useMutation({
     mutationFn: (data: Vehicle) => {
-      return client.DELETE("/vehicles/{vehicle_id}", {
+      return openApiClient.DELETE("/vehicles/{vehicle_id}", {
         params: { path: { vehicle_id: vehicle.id } },
       });
     },

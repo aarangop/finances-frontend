@@ -16,7 +16,7 @@ export let browserQueryClient: QueryClient | undefined = undefined;
 
 export function getQueryClient() {
   if (isServer) {
-    // Server: always make a new query client
+    // Server: always make a new query client, otherwise we'd leak state to other requests
     return makeQueryClient();
   } else {
     // Browser: make a new query client if we don't already have one

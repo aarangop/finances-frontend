@@ -137,7 +137,7 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
     }, 2000);
   }, []);
 
-  const onCreateError = useCallback((error: Error) => {
+  const onCreateError = useCallback(() => {
     enqueueSnackbar("Failed to create trip", {
       variant: "error",
       autoHideDuration: 1500,
@@ -151,7 +151,7 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
     });
   }, []);
 
-  const onUpdateError = useCallback((error: Error) => {
+  const onUpdateError = useCallback(() => {
     enqueueSnackbar("Failed to update trip", {
       variant: "error",
       autoHideDuration: 1500,
@@ -183,7 +183,7 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
     "vehicle",
   ]);
 
-  const { handleVehicleSelect, handleOdometerChange } = useCarTripForm({
+  const { handleVehicleSelect } = useCarTripForm({
     setValue,
     watch,
   });

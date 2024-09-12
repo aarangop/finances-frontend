@@ -1,9 +1,9 @@
 "use client";
 
-import { useDrawerContext } from "@/components/context/drawerContext";
-import { useDrawerControlsContext } from "@/components/context/drawerControlsContext";
 import Main from "@/components/layout/Main";
 import FinancesSidebar from "@/components/sidebars/FinancesSidebar";
+import { useDrawerControlsContext } from "@/context/DrawerControlsContext";
+import { useDrawerContext } from "@/hooks/drawers";
 import { Typography } from "@mui/material";
 import { useEffect } from "react";
 

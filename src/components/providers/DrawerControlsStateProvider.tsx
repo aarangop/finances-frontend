@@ -3,7 +3,7 @@
 import { useState } from "react";
 import DrawerControlsContext, {
   DrawerControlsStateType,
-} from "../context/drawerControlsContext";
+} from "../../context/DrawerControlsContext";
 
 interface DrawerControlsStateProviderProps {
   children: React.ReactNode;

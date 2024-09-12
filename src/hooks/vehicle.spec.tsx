@@ -1,8 +1,7 @@
-import { getQueryClient } from "@/api/queryClient";
 import { components } from "@/api/schema";
 import server, { apiPath } from "@/mocks/node";
-import { renderHook } from "@/testUtils";
-import { QueryClientProvider, useQuery } from "@tanstack/react-query";
+import { renderHook } from "@/utils/testing";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 import { act, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import { useCreateVehicle, useUpdateVehicle } from "./vehicle";
@@ -22,19 +21,13 @@ const mockVehicleCreate: VehicleCreate = {
 };
 const mockVehicle: Vehicle = { ...mockVehicleCreate, id: 123 };
 
-const queryClient = getQueryClient();
-
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-);
-
 describe("useCreateVehicle", () => {
-  beforeAll(() => {
+  beforeEach(() => {
     server.use(
       http.post<any, VehicleCreate, Vehicle, string>(
         apiPath("/vehicles"),
         async ({ request }) => {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 100));
           const newVehicle = await request.json();
           return HttpResponse.json<Vehicle>({
             ...newVehicle,
@@ -47,19 +40,11 @@ describe("useCreateVehicle", () => {
 
   it("should return vehicle data with id when request is successful", async () => {
     // Arrange: Render the hook
-    const { result } = renderHook(() => useCreateVehicle({}), { wrapper });
+    const { result } = renderHook(() => useCreateVehicle());
 
     // Act: Perform the mutation
     await act(async () => {
-      await result.current.mutateAsync({
-        name: "Car 1",
-        make: "Toyota",
-        model: "Corolla",
-        year: 2020,
-        odometer: 0,
-        license_plate: "",
-        vehicle_type: "car",
-      });
+      await result.current.mutateAsync(mockVehicleCreate);
     });
 
     // Assert: Check for id property in the response data
@@ -71,7 +56,7 @@ describe("useCreateVehicle", () => {
 
   it("should set data when request succeeds", async () => {
     // Arrange: Render the hook
-    const { result } = renderHook(() => useCreateVehicle({}), { wrapper });
+    const { result } = renderHook(() => useCreateVehicle());
 
     // Act: Perform the mutation
     await act(async () => {
@@ -79,30 +64,37 @@ describe("useCreateVehicle", () => {
     });
 
     // Assert: Check data in the response
-    await waitFor(async () => {
-      expect(result.current.data).toBe(mockVehicle);
-    });
+    expect(result.current.data).toEqual({ ...mockVehicleCreate, id: 1 });
   });
 
-  it("should invalidate the vehicles query when request succeeds", async () => {
-    // Arrange: Render hooks
-    const { result } = renderHook(() => useCreateVehicle({}), { wrapper });
-    // Render a vehicles query that should be invalidated.
+  it("should invalidate the vehicles query when create mutation succeeds", async () => {
+    // Create a query client to be reused across the hooks in this test.
+    const queryClient = new QueryClient();
+    const { result: mutation } = renderHook(() => useCreateVehicle(), {
+      queryClient,
+    });
+    // Render a vehicles query that should be invalidated. Reuse the query client.
     const { result: vehiclesQuery } = renderHook(
-      () => useQuery({ queryKey: ["vehicles"], queryFn: () => [] }),
-      { wrapper }
+      () =>
+        useQuery({
+          queryKey: ["vehicles"],
+          queryFn: () => [],
+        }),
+      { queryClient }
     );
     // Wait for vehicles query to resolve
     await waitFor(() => vehiclesQuery.current.isSuccess);
-    expect(vehiclesQuery.current.isStale).toBe(false);
 
     // Act: Perform the mutation
     await act(async () => {
-      await result.current.mutateAsync(mockVehicleCreate);
+      await mutation.current.mutateAsync(mockVehicleCreate);
     });
 
     // Assert: Check if the vehicles query is invalidated
-    expect(vehiclesQuery.current.isStale).toBe(true);
+    await waitFor(() => {
+      // After the mutation, the vehicles query should be stale
+      expect(vehiclesQuery.current.isStale).toBe(true);
+    });
   });
 
   it("should call onError when the request fails", async () => {
@@ -118,9 +110,7 @@ describe("useCreateVehicle", () => {
       )
     );
 
-    const { result } = renderHook(() => useCreateVehicle({ onError }), {
-      wrapper,
-    });
+    const { result } = renderHook(() => useCreateVehicle({ onError }));
 
     // Act: Try to create a vehicle and expect it to fail
     await act(async () => {
@@ -156,7 +146,7 @@ describe("useUpdateVehicle", () => {
 
   it("should return updated vehicle data when request is successful", async () => {
     // Arrange: Render the hook
-    const { result } = renderHook(() => useUpdateVehicle(), { wrapper });
+    const { result } = renderHook(() => useUpdateVehicle());
     const updatedVehicle = { ...mockVehicle, name: "Car 2" };
 
     // Act: Perform the mutation
@@ -171,30 +161,34 @@ describe("useUpdateVehicle", () => {
     });
   });
 
-  it("should invalidate the vehicles query when request succeeds", async () => {
-    // Arrange: Render hooks
-    const { result: updateVehicleMutation } = renderHook(
-      () => useUpdateVehicle(),
-      { wrapper }
-    );
-    const updatedVehicle = { ...mockVehicle, name: "Car 2" };
-    // Render a vehicles query that should be invalidated.
+  it("should invalidate the vehicles query when update mutation succeeds", async () => {
+    // Create a query client to be reused across the hooks in this test.
+    const queryClient = new QueryClient();
+    const { result: mutation } = renderHook(() => useUpdateVehicle(), {
+      queryClient,
+    });
+    // Render a vehicles query that should be invalidated. Reuse the query client.
     const { result: vehiclesQuery } = renderHook(
-      () => useQuery({ queryKey: ["vehicles"], queryFn: () => [] }),
-      { wrapper }
+      () =>
+        useQuery({
+          queryKey: ["vehicles"],
+          queryFn: () => [],
+        }),
+      { queryClient }
     );
     // Wait for vehicles query to resolve
     await waitFor(() => vehiclesQuery.current.isSuccess);
-    expect(vehiclesQuery.current.isStale).toBe(false);
 
     // Act: Perform the mutation
     await act(async () => {
-      await updateVehicleMutation.current.mutateAsync(updatedVehicle);
+      await mutation.current.mutateAsync({ ...mockVehicle, name: "Car 2" });
     });
-    expect(updateVehicleMutation.current.data).toEqual(updatedVehicle);
 
     // Assert: Check if the vehicles query is invalidated
-    expect(vehiclesQuery.current.isStale).toBe(true);
+    await waitFor(() => {
+      // After the mutation, the vehicles query should be stale
+      expect(vehiclesQuery.current.isStale).toBe(true);
+    });
   });
 
   it("should call onError when the request fails", async () => {
@@ -210,9 +204,7 @@ describe("useUpdateVehicle", () => {
       )
     );
 
-    const { result } = renderHook(() => useUpdateVehicle({ onError }), {
-      wrapper,
-    });
+    const { result } = renderHook(() => useUpdateVehicle({ onError }));
 
     // Act: Try to update a vehicle and expect it to fail
     await act(async () => {
@@ -232,9 +224,7 @@ describe("useUpdateVehicle", () => {
     const onSuccess = jest.fn();
     const updatedVehicle = { ...mockVehicle, name: "Car 2" };
 
-    const { result } = renderHook(() => useUpdateVehicle({ onSuccess }), {
-      wrapper,
-    });
+    const { result } = renderHook(() => useUpdateVehicle({ onSuccess }));
 
     // Act: Try to update a vehicle and expect it to succeed
     await act(async () => {

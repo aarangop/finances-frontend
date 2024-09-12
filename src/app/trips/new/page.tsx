@@ -1,8 +1,7 @@
 "use client";
 
-import client from "@/api/apiClient";
-import { getQueryClient } from "@/api/queryClient";
 import Main from "@/components/layout/Main";
+import { useOpenApiClient } from "@/hooks/api";
 import {
   Box,
   Button,
@@ -18,6 +17,7 @@ import {
   SelectChangeEvent,
   Typography,
 } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -26,7 +26,8 @@ const steps = ["Trip Type", "Trip Data"];
 export default function NewTripPage() {
   const [tripType, setTripType] = useState<string>("");
   const [nextStepDisabled, setNextStepDisabled] = useState(false);
-  const queryClient = getQueryClient();
+  const queryClient = useQueryClient();
+  const client = useOpenApiClient();
   const router = useRouter();
 
   queryClient.prefetchQuery({

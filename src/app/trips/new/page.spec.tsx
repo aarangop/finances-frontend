@@ -1,4 +1,4 @@
-import { render } from "@/testUtils";
+import { render } from "@/utils/testing";
 import { fireEvent, screen } from "@testing-library/react";
 import NewTripPage from "./page";
 

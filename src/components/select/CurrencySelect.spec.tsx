@@ -1,4 +1,4 @@
-import { render } from "@/testUtils";
+import { render } from "@/utils/testing";
 import { screen } from "@testing-library/react";
 import { ControllerRenderProps, FieldValues } from "react-hook-form";
 import CurrencySelect from "./CurrencySelect";
@@ -100,7 +100,6 @@ describe("CurrencySelect", () => {
     );
     // This locator matches the div that's used to display the selected value
     const inputElement = screen.getByRole("combobox");
-    screen.debug();
     expect(inputElement).toHaveTextContent("€ EUR");
   });
 });

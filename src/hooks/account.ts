@@ -1,19 +1,20 @@
-import getClient from "@/api/apiClient";
 import { components } from "@/api/schema";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useApi, useOpenApiClient } from "./api";
 
 type Account = components["schemas"]["AccountSchema"];
 type AccountCreate = components["schemas"]["AccountCreateSchema"];
 
-export const useGetAccounts = () =>
-  useQuery({
+export const useGetAccounts = () => {
+  const client = useOpenApiClient();
+  return useQuery({
     queryKey: ["accounts"],
     queryFn: async () => {
-      const client = getClient();
       const response = await client.GET("/accounts/");
       return response.data as Account[];
     },
   });
+};
 
 interface UseCreateAccountProps {
   onSuccess?: (data: Account, variables: AccountCreate, context: any) => void;
@@ -22,13 +23,16 @@ interface UseCreateAccountProps {
 export const useCreateAccount = ({
   onSuccess = () => {},
   onError = () => {},
-}: UseCreateAccountProps) =>
-  useMutation({
+}: UseCreateAccountProps) => {
+  const { openApiClient, queryClient } = useApi();
+  return useMutation({
     mutationKey: ["accounts"],
     mutationFn: async (account: AccountCreate) => {
-      const client = getClient();
       try {
-        const response = await client.POST("/accounts/", { body: account });
+        const response = await openApiClient.POST("/accounts/", {
+          body: account,
+        });
+        queryClient.invalidateQueries({ queryKey: ["accounts"] });
         return response.data as Account;
       } catch (error: any) {
         throw error;
@@ -37,3 +41,4 @@ export const useCreateAccount = ({
     onSuccess,
     onError,
   });
+};

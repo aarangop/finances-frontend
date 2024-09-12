@@ -1,10 +1,8 @@
 "use client";
 
-import getClient from "@/api/apiClient";
 import { components } from "@/api/schema";
 import { useGetVehicles } from "@/hooks/vehicle";
 import { Autocomplete, CircularProgress, TextField } from "@mui/material";
-import { useRef } from "react";
 import { ControllerRenderProps, FieldValues } from "react-hook-form";
 
 interface VehicleAutocompleteProps<T extends FieldValues> {
@@ -28,8 +26,7 @@ export default function VehicleAutocomplete<T extends FieldValues>({
   field,
   required = false,
 }: VehicleAutocompleteProps<T>): JSX.Element {
-  const client = useRef(getClient());
-  const { data: vehicles, isPending } = useGetVehicles();
+  const { data: vehicles, isLoading } = useGetVehicles();
 
   return (
     <Autocomplete
@@ -58,7 +55,7 @@ export default function VehicleAutocomplete<T extends FieldValues>({
             ...params.InputProps,
             endAdornment: (
               <>
-                {isPending ? (
+                {isLoading ? (
                   <CircularProgress color="inherit" size={20} />
                 ) : null}
                 {params.InputProps.endAdornment}
