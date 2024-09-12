@@ -1,6 +1,6 @@
 import { components } from "@/api/schema";
 import server, { apiPath } from "@/mocks/node";
-import { render } from "@/testUtils";
+import { render } from "@/utils/testing";
 import { act, fireEvent, screen, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import AccountForm from "./AccountForm";

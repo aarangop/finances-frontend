@@ -1,7 +1,7 @@
 import { components } from "@/api/schema";
 import VehicleAutocomplete from "@/components/autocomplete/VehicleAutocomplete";
 import server, { apiPath } from "@/mocks/node";
-import { render } from "@/utils/testUtils";
+import { render } from "@/utils/testing";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";

@@ -189,7 +189,7 @@ export default function CarTripForm({ trip }: CarTripFormProps) {
   });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate>
+    <form onSubmit={handleSubmit(onSubmit)} noValidate role="form">
       <Card>
         <CardHeader
           title={

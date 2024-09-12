@@ -1,4 +1,4 @@
-import { render } from "@/testUtils";
+import { render } from "@/utils/testing";
 import { screen } from "@testing-library/react";
 import NewTripButton from "./NewTripButton";
 
