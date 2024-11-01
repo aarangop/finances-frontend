@@ -1,5 +1,6 @@
 import { components } from "@/api/schema";
 import { render } from "@/utils/testing";
+import { screen } from "@testing-library/react";
 import VehicleCardGrid from "./VehicleCardGrid";
 
 type Vehicle = components["schemas"]["VehicleSchema"];
@@ -38,16 +39,28 @@ const mockVehicles: Vehicle[] = [
     vehicle_type: "motorcycle",
   } as Vehicle,
 ];
+
 describe("VehicleCardGrid", () => {
-  it("should render the VehicleCardGrid component", () => {
-    const { container } = render(
+  it("should render error message when isError is true", () => {
+    render(
+      <VehicleCardGrid isLoading={false} isError={true} isSuccess={false} />
+    );
+    expect(screen.getByText("Error loading vehicles")).toBeInTheDocument();
+  });
+
+  it("should render loading skeletons when isLoading is true", () => {
+    render(
+      <VehicleCardGrid isLoading={true} isError={false} isSuccess={false} />
+    );
+    expect(screen.getAllByTestId("skeleton")).toHaveLength(2);
+    render(
       <VehicleCardGrid
-        isSuccess={true}
-        isError={false}
-        vehicles={mockVehicles}
         isLoading={false}
+        isError={false}
+        isSuccess={true}
+        vehicles={[]}
       />
     );
-    expect(container).toMatchSnapshot();
+    expect(screen.queryByText(/Car/)).not.toBeInTheDocument();
   });
 });

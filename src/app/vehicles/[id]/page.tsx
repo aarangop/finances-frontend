@@ -1,8 +1,9 @@
 "use client";
 
-import getClient from "@/api/apiClient";
 import VehicleForm from "@/components/forms/VehicleForm";
 import Main from "@/components/layout/Main";
+import { useOpenApiClient } from "@/hooks/api";
+import { useGetVehicle } from "@/hooks/vehicle";
 import { ExpandLessRounded, ExpandMoreRounded } from "@mui/icons-material";
 import {
   Button,
@@ -15,24 +16,15 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 export default function VehicleDetailPage({
   params,
 }: {
   params: { id: number };
 }) {
-  const client = useRef(getClient());
-  const { data: vehicle, status } = useQuery({
-    queryKey: ["vehicles", params.id],
-    queryFn: () =>
-      client.current.GET("/vehicles/{vehicle_id}", {
-        params: {
-          path: { vehicle_id: params.id },
-        },
-      }),
-  });
+  const client = useOpenApiClient();
+  const { data: vehicle, status } = useGetVehicle(params.id);
   const [showFuelConsumption, setShowFuelConsumption] = useState(false);
 
   return (
@@ -51,9 +43,9 @@ export default function VehicleDetailPage({
         )}
         {status === "success" && (
           <Grid container gap={2}>
-            {vehicle.data && (
+            {vehicle && (
               <Grid item xs={12}>
-                <VehicleForm vehicle={vehicle.data} />
+                <VehicleForm vehicle={vehicle} />
               </Grid>
             )}
             <Grid item xs={12}>

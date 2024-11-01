@@ -18,7 +18,7 @@ import {
 export default function VehicleCardSkeleton() {
   const theme = useTheme();
   return (
-    <Card>
+    <Card data-testid="skeleton">
       <CardHeader
         title={
           <Box
