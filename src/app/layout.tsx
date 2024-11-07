@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 
 import NavBar from "@/components/navbar/NavBar";
 import Providers from "@/components/providers/Providers";
-import { CssBaseline } from "@mui/material";
+import { Box, CssBaseline } from "@mui/material";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,8 +25,26 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
           <CssBaseline>
-            <NavBar />
-            {children}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                minHeight: "100vh",
+              }}
+            >
+              <NavBar />
+              <Box
+                component="main"
+                sx={{
+                  flexGrow: 1,
+                  mt: 8, // Space for NavBar
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+              >
+                {children}
+              </Box>
+            </Box>
           </CssBaseline>
         </Providers>
       </body>

@@ -13,7 +13,12 @@ import ThemeToggleSwitch from "../buttons/ThemeToggleSwitch";
  */
 export default function NavBar() {
   return (
-    <AppBar position="static">
+    <AppBar
+      position="fixed"
+      sx={{
+        zIndex: (theme) => theme.zIndex.drawer + 1,
+      }}
+    >
       <Container>
         <Toolbar sx={{ width: "100%" }}>
           <Typography variant="h6" sx={{ mr: "1rem" }}>

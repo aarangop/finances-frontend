@@ -1,7 +1,7 @@
 "use client";
 
 import { useIsPathActive } from "@/hooks/navigation";
-import { Box, useTheme } from "@mui/material";
+import { alpha, Box, Fade, useTheme } from "@mui/material";
 import Button from "@mui/material/Button";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
@@ -25,16 +25,18 @@ interface NavigationButtonProps {
 function SelectedIndicator({ isVisible }: { isVisible: boolean }) {
   const theme = useTheme();
   return (
-    <svg height="10" width="10">
-      <circle
-        cx="5"
-        cy="5"
-        r="5"
-        stroke="none"
-        strokeWidth="3"
-        fill={isVisible ? theme.palette.secondary.main : "none"}
-      />
-    </svg>
+    <Fade in={isVisible} timeout={300}>
+      <svg height="10" width="10">
+        <circle
+          cx="5"
+          cy="5"
+          r="5"
+          stroke="none"
+          strokeWidth="3"
+          fill={theme.palette.secondary.main}
+        />
+      </svg>
+    </Fade>
   );
 }
 
@@ -64,6 +66,7 @@ export default function NavigationButton({
   }
 
   const iconColor = selected ? "action.selected" : "inherit";
+
   return (
     <Button
       href={href}
@@ -71,6 +74,26 @@ export default function NavigationButton({
       passHref
       color="inherit"
       variant={selected ? "contained" : "text"}
+      sx={{
+        minWidth: "auto",
+        padding: "6px 16px", // Add fixed padding
+        transition: (theme) =>
+          theme.transitions.create(["background-color", "box-shadow"], {
+            duration: theme.transitions.duration.short,
+          }),
+        "&:hover": {
+          bgcolor: (theme) =>
+            selected
+              ? alpha(theme.palette.primary.main, 0.2)
+              : alpha(theme.palette.primary.main, 0.04),
+        },
+        "& .MuiSvgIcon-root": {
+          transition: (theme) =>
+            theme.transitions.create("color", {
+              duration: theme.transitions.duration.short,
+            }),
+        },
+      }}
     >
       <Box display="flex" flexDirection="row" alignItems="center" gap={1}>
         {icon && cloneElement(icon as ReactElement, { color: iconColor })}
