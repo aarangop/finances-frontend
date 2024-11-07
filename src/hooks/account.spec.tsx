@@ -29,7 +29,7 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
 describe("useGetAccount hook", () => {
   it("should return the account data", async () => {
     server.use(
-      http.get<any, Account[], any, "/accounts/">("/accounts/", async () => {
+      http.get<any, Account[], any>(apiPath("/accounts/"), async () => {
         return HttpResponse.json<Account[]>([account]);
       })
     );
