@@ -1,7 +1,7 @@
+import { useToggleDrawer } from "@/hooks/drawers";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import { Button, Drawer, ListItem } from "@mui/material";
-import { useToggleDrawer } from "../../context/DrawerContext";
 import NavigationButton from "../buttons/NavigationButton";
 
 interface FinancesSidebarProps {

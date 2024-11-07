@@ -1,39 +1,22 @@
 "use client";
 
-import { useDrawerControlsContext } from "@/context/DrawerControlsContext";
-import { useToggleDrawer } from "@/hooks/drawers";
-import {
-  Box,
-  Button,
-  Container,
-  IconButton,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+import { useIsPathActive } from "@/hooks/navigation";
+import { Box, Button, Container, Toolbar, Typography } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
-import { GridMenuIcon } from "@mui/x-data-grid";
 import NextLink from "next/link";
+import { usePathname } from "next/navigation";
 import NavigationButton from "../buttons/NavigationButton";
 import ThemeToggleSwitch from "../buttons/ThemeToggleSwitch";
 
 export default function NavBar() {
-  const drawerControlsContext = useDrawerControlsContext();
-  const toggleLeftDrawer = useToggleDrawer("left");
+  const pathname = usePathname();
+
+  const isActive = useIsPathActive(pathname);
 
   return (
     <AppBar position="static">
       <Container>
         <Toolbar sx={{ width: "100%" }}>
-          {drawerControlsContext.left.isVisible && (
-            <IconButton
-              disabled={drawerControlsContext.left.isDisabled}
-              color="inherit"
-              sx={{ mr: 1 }}
-              onClick={toggleLeftDrawer}
-            >
-              <GridMenuIcon />
-            </IconButton>
-          )}
           <Typography variant="h6" sx={{ mr: "1rem" }}>
             My Finances
           </Typography>
@@ -47,16 +30,31 @@ export default function NavBar() {
             }}
             gap={2}
           >
-            <NavigationButton href="/" text="Home" selected={true} />
+            <NavigationButton href="/" text="Home" selected={isActive("/")} />
             <Button
               href="/finances"
               component={NextLink}
               passHref
               color="inherit"
+              sx={{
+                backgroundColor: isActive("/finances")
+                  ? "action.selected"
+                  : "transparent",
+              }}
             >
               Finances
             </Button>
-            <Button href="/trips" component={NextLink} passHref color="inherit">
+            <Button
+              href="/trips"
+              component={NextLink}
+              passHref
+              color="inherit"
+              sx={{
+                backgroundColor: isActive("/trips")
+                  ? "action.selected"
+                  : "transparent",
+              }}
+            >
               Trips
             </Button>
             <Button
@@ -64,6 +62,11 @@ export default function NavBar() {
               component={NextLink}
               passHref
               color="inherit"
+              sx={{
+                backgroundColor: isActive("/vehicles")
+                  ? "action.selected"
+                  : "transparent",
+              }}
             >
               Vehicles
             </Button>
