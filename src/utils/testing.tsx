@@ -68,6 +68,23 @@ export type CustomRenderHookOptions<T> = RenderHookOptions<T> & {
  *
  * @returns {RenderHookResult<TResult>} - The result of rendering the hook.
  */
+/**
+ * Custom render hook for testing purposes.
+ *
+ * This function wraps the provided hook callback with necessary providers
+ * such as `OpenApiClientProvider` and `QueryClientProvider` to facilitate
+ * testing with context dependencies.
+ *
+ * @template TResult - The type of the result returned by the hook.
+ * @template TProps - The type of the props passed to the hook.
+ *
+ * @param {function(TProps): TResult} callback - The hook callback to be rendered.
+ * @param {CustomRenderHookOptions<TProps>} [options] - Optional configuration for the render hook.
+ * @param {QueryClient} [options.queryClient] - An optional instance of QueryClient. If not provided, a new instance will be created.
+ * @param {OpenApiClient} [options.openApiClient] - An optional instance of OpenApiClient. If not provided, a new instance will be created using the base URL from environment variables or a default value.
+ *
+ * @returns {RenderHookResult<TResult, TProps>} The result of the rendered hook.
+ */
 export const customRenderHook = <TResult, TProps>(
   callback: (props: TProps) => TResult,
   options?: CustomRenderHookOptions<TProps>

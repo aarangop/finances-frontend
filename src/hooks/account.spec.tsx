@@ -4,7 +4,7 @@ import { renderHook } from "@/utils/testing";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
-import { useCreateAccount, useGetAccounts } from "./account";
+import { useCreateAccount, useDeleteAccount, useGetAccounts } from "./account";
 
 type Account = components["schemas"]["AccountSchema"];
 type AccountCreate = components["schemas"]["AccountCreateSchema"];
@@ -91,6 +91,60 @@ describe("useCreateAccount hook", () => {
     );
     const { result } = renderHook(
       () => useCreateAccount({ onSuccess: jest.fn(), onError }),
+      { wrapper }
+    );
+
+    await expect(result.current.mutateAsync(account)).rejects.toThrow();
+
+    expect(onError).toHaveBeenCalledWith(expect.any(Error), account, undefined);
+  });
+});
+
+describe("useDeleteAccount hook", () => {
+  it("should delete the account successfully", async () => {
+    server.use(
+      http.delete(apiPath("/accounts/1"), () => {
+        return new HttpResponse(null, { status: 204 });
+      })
+    );
+    const { result } = renderHook(
+      () => useDeleteAccount({ onSuccess: jest.fn(), onError: jest.fn() }),
+      { wrapper }
+    );
+    await result.current.mutateAsync(account);
+    await waitFor(() => expect(result.current.status).toBe("success"));
+  });
+
+  it("should call onSuccess callback when deletion succeeds", async () => {
+    const onSuccess = jest.fn();
+    server.use(
+      http.delete(apiPath("/accounts/1"), () => {
+        return new HttpResponse(null, { status: 204 });
+      })
+    );
+
+    const { result } = renderHook(
+      () => useDeleteAccount({ onSuccess, onError: jest.fn() }),
+      { wrapper }
+    );
+
+    await result.current.mutateAsync(account);
+
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalled();
+      // TODO: add assertion that the onSuccess callback is called with the correct arguments.
+    });
+  });
+
+  it("should call onError callback when deletion fails", async () => {
+    const onError = jest.fn();
+    server.use(
+      http.delete(apiPath("/accounts/1"), () => {
+        return HttpResponse.error();
+      })
+    );
+    const { result } = renderHook(
+      () => useDeleteAccount({ onSuccess: jest.fn(), onError }),
       { wrapper }
     );
 

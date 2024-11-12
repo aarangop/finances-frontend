@@ -7,6 +7,7 @@ import {
   CardActions,
   CardContent,
   CardHeader,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
@@ -17,6 +18,7 @@ type Account = components["schemas"]["AccountSchema"];
 
 export default function AccountCard({ account }: { account: Account }) {
   const router = useRouter();
+  const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
 
   const handleUpdateBalance = (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -26,7 +28,11 @@ export default function AccountCard({ account }: { account: Account }) {
   const handleDeleteAccount = (event: React.MouseEvent, id: number) => {
     event.stopPropagation();
   };
-  const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
+
+  const formattedBalance = new Intl.NumberFormat(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(account.balance);
 
   return (
     <>
@@ -37,33 +43,34 @@ export default function AccountCard({ account }: { account: Account }) {
           setUpdateDialogOpen(false);
         }}
       />
-      <Card
-        style={{ cursor: "pointer" }}
-        onClick={() => router.push(`accounts/${account.id}`)}
-      >
-        <CardHeader
-          title={account.account_alias}
-          subheader={account.account_number}
-        />
-        <CardContent>
-          <Typography variant="body1">{account.holder}</Typography>
-          <Typography variant="body2">
-            {account.currency} {account.balance}
-          </Typography>
-        </CardContent>
-        <CardActions>
-          <Button size="small" variant="outlined" onClick={handleUpdateBalance}>
-            Update Balance
-          </Button>
-          <Button
-            size="small"
-            color="error"
-            onClick={(event) => handleDeleteAccount(event, account.id)}
-          >
-            Delete
-          </Button>
-        </CardActions>
-      </Card>
+      <Tooltip title="Click to view details">
+        <Card
+          style={{
+            cursor: "pointer",
+          }}
+          onClick={() => router.push(`accounts/${account.id}`)}
+        >
+          <CardHeader
+            title={account.account_alias}
+            subheader={account.account_number}
+          />
+          <CardContent>
+            <Typography variant="body1">{account.holder}</Typography>
+            <Typography variant="body2">
+              {account.currency} {formattedBalance}
+            </Typography>
+          </CardContent>
+          <CardActions>
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={handleUpdateBalance}
+            >
+              Update Balance
+            </Button>
+          </CardActions>
+        </Card>
+      </Tooltip>
     </>
   );
 }

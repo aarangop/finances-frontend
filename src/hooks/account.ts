@@ -134,7 +134,7 @@ interface UseCreateAccountProps {
 export const useCreateAccount = ({
   onSuccess = () => {},
   onError = () => {},
-}: UseCreateAccountProps): object => {
+}: UseCreateAccountProps) => {
   const { openApiClient, queryClient } = useApi();
 
   return useMutation({
@@ -143,6 +143,55 @@ export const useCreateAccount = ({
       try {
         const response = await openApiClient.POST("/accounts/", {
           body: account,
+        });
+        queryClient.invalidateQueries({ queryKey: ["accounts"] });
+        return response.data as Account;
+      } catch (error: any) {
+        throw error;
+      }
+    },
+    onSuccess,
+    onError,
+  });
+};
+
+interface UseDeleteAccountProps {
+  onSuccess?: (data: Account, variables: Account, context: any) => void;
+  onError?: (error: Error, variables: Account, context: any) => void;
+}
+
+/**
+ * Custom hook to delete an account.
+ *
+ * @param {Object} props - The properties for the hook.
+ * @param {Function} [props.onSuccess] - Callback function to be called on successful deletion.
+ * @param {Function} [props.onError] - Callback function to be called on error during deletion.
+ * @returns {Object} - The mutation object returned by `useMutation`.
+ *
+ * @example
+ * const { mutate: deleteAccount } = useDeleteAccount({
+ *   onSuccess: () => {
+ *     console.log('Account deleted successfully');
+ *   },
+ *   onError: (error) => {
+ *     console.error('Error deleting account', error);
+ *   },
+ * });
+ *
+ * deleteAccount(account);
+ */
+export const useDeleteAccount = ({
+  onSuccess = () => {},
+  onError = () => {},
+}: UseDeleteAccountProps) => {
+  const { openApiClient, queryClient } = useApi();
+
+  return useMutation({
+    mutationKey: ["accounts"],
+    mutationFn: async (account: Account) => {
+      try {
+        const response = await openApiClient.DELETE("/accounts/{account_id}", {
+          params: { path: { account_id: account.id } },
         });
         queryClient.invalidateQueries({ queryKey: ["accounts"] });
         return response.data as Account;
