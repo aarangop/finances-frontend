@@ -11,14 +11,20 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import DeleteAccountDialog from "../dialogs/DeleteAccountDialog";
+import UpdateAccountBalanceDialog from "../dialogs/UpdateAccountBalanceDialog";
 
 type Account = components["schemas"]["AccountSchema"];
 
 export default function AccountDetailsCard({ account }: { account: Account }) {
   const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [isUpdateDialogOpen, setUpdateDialogOpen] = useState(false);
 
   const handleUpdateBalance = () => {
-    // Implement update balance logic
+    setUpdateDialogOpen(true);
+  };
+
+  const handleUpdateBalanceDialogClose = () => {
+    setUpdateDialogOpen(false);
   };
 
   const handleEditAccount = () => {
@@ -39,6 +45,11 @@ export default function AccountDetailsCard({ account }: { account: Account }) {
 
   return (
     <>
+      <UpdateAccountBalanceDialog
+        account={account}
+        open={isUpdateDialogOpen}
+        handleDialogClose={handleUpdateBalanceDialogClose}
+      />
       <DeleteAccountDialog
         account={account}
         open={isDeleteDialogOpen}
