@@ -16,7 +16,6 @@ const isChildPathOf = (child: string, parent: string) => {
   let parentPath = parent.replace(/https?:\/\/[^/]+/, "");
   let childPath = child.replace(/https?:\/\/[^/]+/, "");
 
-  console.log("after stripping", parent, child);
   if (parentPath === "/" && childPath !== "/") {
     return false;
   }

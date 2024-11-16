@@ -1,14 +1,16 @@
 import { components } from "@/api/schema";
-import { useUpdateAccountBalance } from "@/hooks/account";
 import {
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  TextField,
 } from "@mui/material";
-import { useState } from "react";
+import { enqueueSnackbar } from "notistack";
+import { useRef } from "react";
+import BalanceUpdateForm, {
+  BalanceUpdateFormRef,
+} from "../forms/BalanceUpdateForm";
 
 type Account = components["schemas"]["AccountSchema"];
 
@@ -21,19 +23,25 @@ export default function UpdateAccountBalanceDialog({
   open: boolean;
   handleDialogClose: () => void;
 }) {
-  const [balance, setBalance] = useState(account.balance);
-  const onBalanceUpdated = () => {
+  const formRef = useRef<BalanceUpdateFormRef>(null);
+
+  const handleSuccess = () => {
+    enqueueSnackbar("Balance updated successfully", {
+      variant: "success",
+      autoHideDuration: 2000,
+    });
     handleDialogClose();
   };
 
-  const updateMutation = useUpdateAccountBalance({
-    account,
-    newBalance: balance,
-    onSuccess: onBalanceUpdated,
-  });
+  const handleError = (error: Error) => {
+    enqueueSnackbar(`Failed to update balance: ${error.message}`, {
+      variant: "error",
+      autoHideDuration: 5000,
+    });
+  };
 
-  const updateBalance = () => {
-    updateMutation.mutate({ amount: balance });
+  const handleSubmit = () => {
+    formRef.current?.submit();
   };
 
   return (
@@ -42,21 +50,16 @@ export default function UpdateAccountBalanceDialog({
         {`Update Balance for '${account.account_alias}'`}
       </DialogTitle>
       <DialogContent>
-        <TextField
-          autoFocus
-          margin="dense"
-          id="balance"
-          label="Balance"
-          type="number"
-          fullWidth
-          variant="standard"
-          value={balance}
-          onChange={(e) => setBalance(Number(e.target.value))}
+        <BalanceUpdateForm
+          ref={formRef}
+          account={account}
+          onSuccess={handleSuccess}
+          onError={handleError}
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleDialogClose}>Cancel</Button>
-        <Button onClick={updateBalance} color="primary" variant="contained">
+        <Button onClick={handleSubmit} color="primary" variant="contained">
           Update
         </Button>
       </DialogActions>

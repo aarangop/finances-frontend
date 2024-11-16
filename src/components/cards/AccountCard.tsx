@@ -25,10 +25,6 @@ export default function AccountCard({ account }: { account: Account }) {
     setUpdateDialogOpen(true);
   };
 
-  const handleDeleteAccount = (event: React.MouseEvent, id: number) => {
-    event.stopPropagation();
-  };
-
   const formattedBalance = new Intl.NumberFormat(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -47,6 +43,7 @@ export default function AccountCard({ account }: { account: Account }) {
         <Card
           style={{
             cursor: "pointer",
+            minWidth: 250,
           }}
           onClick={() => router.push(`accounts/${account.id}`)}
         >

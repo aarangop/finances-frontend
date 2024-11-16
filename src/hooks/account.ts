@@ -73,13 +73,21 @@ export function useGetAccountById(id: number): UseQueryResult<Account, Error> {
 
 interface UpdateAccountBalanceProps {
   account: Account;
-  newBalance: number;
   onSuccess?: () => void;
   onError?: (error: Error) => void;
 }
+/**
+ * Custom hook to update the balance of an account.
+ *
+ * @param {Object} props - The properties for updating the account balance.
+ * @param {Account} props.account - The account object containing the account ID.
+ * @param {number} props.newBalance - The new balance to be set for the account.
+ * @param {Function} [props.onSuccess] - Optional callback function to be called on successful update.
+ * @param {Function} [props.onError] - Optional callback function to be called on error.
+ * @returns {Mutation} - The mutation object for updating the account balance.
+ */
 export function useUpdateAccountBalance({
   account,
-  newBalance,
   onSuccess,
   onError,
 }: UpdateAccountBalanceProps) {
@@ -87,10 +95,10 @@ export function useUpdateAccountBalance({
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: { amount: number }) => {
+    mutationFn: (data: { balance: number }) => {
       return client.PUT("/accounts/{account_id}/balance", {
         params: { path: { account_id: account.id } },
-        body: { amount: data.amount },
+        body: { amount: data.balance },
       });
     },
     onSuccess: () => {
