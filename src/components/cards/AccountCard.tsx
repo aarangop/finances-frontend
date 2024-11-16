@@ -1,6 +1,7 @@
 "use client";
 
 import { components } from "@/api/schema";
+import { usePrefetchAccount } from "@/hooks/account";
 import {
   Button,
   Card,
@@ -29,6 +30,9 @@ export default function AccountCard({ account }: { account: Account }) {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(account.balance);
+
+  const prefetchAccountDetails = usePrefetchAccount(account.id);
+  prefetchAccountDetails();
 
   return (
     <>

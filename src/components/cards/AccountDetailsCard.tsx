@@ -1,3 +1,5 @@
+"use client";
+
 import { components } from "@/api/schema";
 import {
   Box,
@@ -9,6 +11,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import DeleteAccountDialog from "../dialogs/DeleteAccountDialog";
 import UpdateAccountBalanceDialog from "../dialogs/UpdateAccountBalanceDialog";
@@ -18,6 +21,7 @@ type Account = components["schemas"]["AccountSchema"];
 export default function AccountDetailsCard({ account }: { account: Account }) {
   const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [isUpdateDialogOpen, setUpdateDialogOpen] = useState(false);
+  const router = useRouter();
 
   const handleUpdateBalance = () => {
     setUpdateDialogOpen(true);
@@ -28,7 +32,7 @@ export default function AccountDetailsCard({ account }: { account: Account }) {
   };
 
   const handleEditAccount = () => {
-    // Implement edit account logic
+    router.push(`/finances/accounts/edit/${account.id}`);
   };
 
   const handleDeleteAccount = () => {

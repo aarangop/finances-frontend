@@ -211,3 +211,17 @@ export const useDeleteAccount = ({
     onError,
   });
 };
+
+export const usePrefetchAccount = (accountId: number) => {
+  const { queryClient, openApiClient } = useApi();
+
+  return () => {
+    queryClient.prefetchQuery({
+      queryKey: ["account", accountId],
+      queryFn: () =>
+        openApiClient.GET(`/accounts/{account_id}`, {
+          params: { path: { account_id: accountId } },
+        }),
+    });
+  };
+};
