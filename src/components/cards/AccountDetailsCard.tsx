@@ -6,21 +6,26 @@ import {
   Button,
   Card,
   CardContent,
+  Dialog,
   Grid,
-  LinearProgress,
   Tooltip,
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import AccountBalanceHistoryChart from "../charts/AccountBalanceHistoryChart";
+import AccountBalanceMiniChart from "../charts/AccountBalanceMiniChart";
 import DeleteAccountDialog from "../dialogs/DeleteAccountDialog";
 import UpdateAccountBalanceDialog from "../dialogs/UpdateAccountBalanceDialog";
+import AccountBalanceIndicator from "../indicators/AccountBalanceIndicator";
 
 type Account = components["schemas"]["AccountSchema"];
 
 export default function AccountDetailsCard({ account }: { account: Account }) {
   const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [isUpdateDialogOpen, setUpdateDialogOpen] = useState(false);
+  const [timeFilter, setTimeFilter] = useState("1M"); // '1M', '6M', '1Y', 'ALL'
+  const [isHistoryChartOpen, setIsHistoryChartOpen] = useState(false);
   const router = useRouter();
 
   const handleUpdateBalance = () => {
@@ -43,9 +48,9 @@ export default function AccountDetailsCard({ account }: { account: Account }) {
     setDeleteDialogOpen(false);
   };
 
-  const spentThisMonth = 0; // Replace with actual value
-  const spendingLimit = 1000; // Replace with actual value
-  const spendingProgress = (spentThisMonth / spendingLimit) * 100;
+  const maskAccountNumber = (accountNumber: string) => {
+    return accountNumber.slice(-4).padStart(accountNumber.length, "*");
+  };
 
   return (
     <>
@@ -59,30 +64,79 @@ export default function AccountDetailsCard({ account }: { account: Account }) {
         open={isDeleteDialogOpen}
         handleDialogClose={handleCloseDeleteDialog}
       />
+      <Dialog
+        open={isHistoryChartOpen}
+        onClose={() => setIsHistoryChartOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <AccountBalanceHistoryChart account={account} />
+      </Dialog>
+      <Box mb={2}>
+        <Grid container spacing={1}>
+          {["1M", "6M", "1Y", "ALL"].map((period) => (
+            <Grid item key={period}>
+              <Button
+                variant={timeFilter === period ? "contained" : "outlined"}
+                size="small"
+                onClick={() => setTimeFilter(period)}
+              >
+                {period}
+              </Button>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
       <Card>
-        <CardContent>
-          <Typography variant="h4">{account.account_alias}</Typography>
-          <Typography variant="subtitle1">{account.account_number}</Typography>
-          <Typography variant="body1">{account.holder}</Typography>
-
-          <Typography
-            variant="body2"
-            style={{ fontFamily: "monospace", fontWeight: "bold" }}
-          >
-            {account.currency} {account.balance}
+        <CardContent
+          sx={{
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            p: 2,
+          }}
+        >
+          {/* Header */}
+          <Typography variant="h4" sx={{ mb: 2 }}>
+            {account.account_alias}
           </Typography>
-          <Box mt={2} flex={"row"}>
-            <Typography variant="h6">Spent this month: </Typography>
-            <Typography
-              variant="h6"
-              style={{ fontFamily: "monospace", fontWeight: "bold" }}
-              mb={2}
-            >
-              {spentThisMonth}
-            </Typography>
-            <LinearProgress variant="determinate" value={spendingProgress} />
+
+          {/* Scrollable main content */}
+          <Box
+            sx={{
+              flex: 1,
+              overflowY: "auto",
+              mb: 1,
+            }}
+          >
+            <Grid container spacing={2}>
+              {/* Account info */}
+              <Grid item xs={12}>
+                <Typography variant="subtitle1">
+                  {maskAccountNumber(account.account_number)}
+                </Typography>
+                <Typography variant="body1">{account.holder}</Typography>
+
+                <Box display="flex" alignItems="center" mt={2}>
+                  <AccountBalanceIndicator account={account} />
+                  <Box mx={2}>
+                    <AccountBalanceMiniChart
+                      accountId={account.id}
+                      onClick={() => {}}
+                      onDoubleClick={() => setIsHistoryChartOpen(true)}
+                    />
+                  </Box>
+                </Box>
+              </Grid>
+            </Grid>
           </Box>
-          <Box mt={2}>
+
+          {/* Action buttons */}
+          <Box
+            sx={{
+              pt: 2,
+            }}
+          >
             <Grid container spacing={2}>
               <Grid item>
                 <Tooltip title="Update account balance">

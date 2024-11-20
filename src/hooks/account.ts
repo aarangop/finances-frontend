@@ -9,6 +9,8 @@ import { useApi, useOpenApiClient } from "./api";
 
 type Account = components["schemas"]["AccountSchema"];
 type AccountCreate = components["schemas"]["AccountCreateSchema"];
+type BalanceUpdate = components["schemas"]["BalanceUpdateSchema"];
+type BalanceUpdateCreate = components["schemas"]["BalanceUpdateCreateSchema"];
 
 /**
  * Custom hook to fetch accounts data using the OpenAPI client.
@@ -96,13 +98,21 @@ export function useUpdateAccountBalance({
 
   return useMutation({
     mutationFn: (data: { balance: number }) => {
+      const balanceUpdate: BalanceUpdateCreate = {
+        balance: data.balance,
+        account_id: account.id,
+        timestamp: new Date().toISOString(),
+      };
       return client.PUT("/accounts/{account_id}/balance", {
         params: { path: { account_id: account.id } },
-        body: { amount: data.balance },
+        body: balanceUpdate,
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
+      queryClient.invalidateQueries({
+        queryKey: ["accounts", account.id, "balance-history"],
+      });
       if (onSuccess) {
         onSuccess();
       }
@@ -212,6 +222,15 @@ export const useDeleteAccount = ({
   });
 };
 
+/**
+ * Custom hook to prefetch account data.
+ *
+ * This hook returns a function that, when called, will prefetch the account data
+ * for the given account ID using the query client and OpenAPI client.
+ *
+ * @param {number} accountId - The ID of the account to prefetch.
+ * @returns {Function} A function that prefetches the account data when called.
+ */
 export const usePrefetchAccount = (accountId: number) => {
   const { queryClient, openApiClient } = useApi();
 
@@ -224,4 +243,39 @@ export const usePrefetchAccount = (accountId: number) => {
         }),
     });
   };
+};
+
+/**
+ * Custom hook to fetch the account balance history for a given account ID within a specified date range.
+ *
+ * @param {number} accountId - The ID of the account to fetch the balance history for.
+ * @param {Date} [startDate=new Date(0)] - The start date for the balance history query. Defaults to the Unix epoch start date.
+ * @param {Date} [endDate=new Date()] - The end date for the balance history query. Defaults to the current date.
+ * @returns {object} - The result of the `useQuery` hook, which includes the account balance history data and query status.
+ */
+export const useGetAccountBalanceHistory = (
+  accountId: number,
+  startDate: Date = new Date(0),
+  endDate: Date = new Date()
+) => {
+  const client = useOpenApiClient();
+
+  return useQuery({
+    queryKey: ["accounts", accountId, "balance-history"],
+    queryFn: async () => {
+      const response = await client.GET(
+        `/accounts/{account_id}/balance/history`,
+        {
+          params: {
+            path: { account_id: accountId },
+            query: {
+              start_date: startDate.toISOString(),
+              end_date: endDate.toISOString(),
+            },
+          },
+        }
+      );
+      return response.data as BalanceUpdate[];
+    },
+  });
 };

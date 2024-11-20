@@ -212,8 +212,8 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Update Balance */
-        put: operations["update_balance_accounts__account_id__balance_put"];
+        /** Update Account Balance Endpoint */
+        put: operations["update_account_balance_endpoint_accounts__account_id__balance_put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -221,15 +221,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/accounts/{account_id}/expenses": {
+    "/accounts/{account_id}/balance/history": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get Account Expenses */
-        get: operations["get_account_expenses_accounts__account_id__expenses_get"];
+        /**
+         * Get Account Balance Updates
+         * @description Retrieve balance updates for a specific account within a date range.
+         *
+         *     Args:
+         *         account_id (int): The ID of the account to retrieve balance updates for.
+         *         start_date (Optional[datetime], optional): The start date for the balance updates. Defaults to the earliest datetime if not provided.
+         *         end_date (Optional[datetime], optional): The end date for the balance updates. Defaults to the current datetime if not provided.
+         *         db (Session, optional): The database session dependency. Defaults to a session provided by the get_db dependency.
+         *
+         *     Returns:
+         *         List[BalanceUpdateModel]: A list of balance updates matching the criteria.
+         */
+        get: operations["get_account_balance_updates_accounts__account_id__balance_history_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -303,6 +315,32 @@ export interface components {
             expenses: components["schemas"]["ExpenseSchema"][];
             /** Id */
             id: number;
+        };
+        /** BalanceUpdateCreateSchema */
+        BalanceUpdateCreateSchema: {
+            /** Balance */
+            balance: number;
+            /**
+             * Timestamp
+             * Format: date-time
+             * @default 2024-11-20T14:25:05.584497Z
+             */
+            timestamp: string;
+            /** Account Id */
+            account_id: number;
+        };
+        /** BalanceUpdateSchema */
+        BalanceUpdateSchema: {
+            /** Balance */
+            balance: number;
+            /** Timestamp */
+            timestamp: string;
+            /** Id */
+            id: number;
+            /** Account Id */
+            account_id: number;
+            /** Old Balance */
+            old_balance: number;
         };
         /** CarTripCreateSchema */
         CarTripCreateSchema: {
@@ -609,11 +647,6 @@ export interface components {
             expenses: components["schemas"]["TravelExpenseSchema"][];
             /** Id */
             id: number;
-        };
-        /** UpdateBalanceSchema */
-        UpdateBalanceSchema: {
-            /** Amount */
-            amount: number;
         };
         /** ValidationError */
         ValidationError: {
@@ -1446,7 +1479,7 @@ export interface operations {
             };
         };
     };
-    update_balance_accounts__account_id__balance_put: {
+    update_account_balance_endpoint_accounts__account_id__balance_put: {
         parameters: {
             query?: never;
             header?: never;
@@ -1457,7 +1490,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateBalanceSchema"];
+                "application/json": components["schemas"]["BalanceUpdateCreateSchema"];
             };
         };
         responses: {
@@ -1467,7 +1500,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["BalanceUpdateSchema"];
                 };
             };
             /** @description Validation Error */
@@ -1481,9 +1514,12 @@ export interface operations {
             };
         };
     };
-    get_account_expenses_accounts__account_id__expenses_get: {
+    get_account_balance_updates_accounts__account_id__balance_history_get: {
         parameters: {
-            query?: never;
+            query?: {
+                start_date?: string | null;
+                end_date?: string | null;
+            };
             header?: never;
             path: {
                 account_id: number;
@@ -1498,7 +1534,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ExpenseSchema"][];
+                    "application/json": components["schemas"]["BalanceUpdateSchema"][];
                 };
             };
             /** @description Validation Error */

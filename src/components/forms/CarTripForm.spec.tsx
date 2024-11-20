@@ -180,7 +180,10 @@ describe("Car Trip Form UI", () => {
       screen.getByLabelText("Vehicle *").focus();
       userEvent.type(screen.getByLabelText("Vehicle *"), "Carolita");
       expect(
-        screen.getByText("Carolita - Toyota Corolla 2020")
+        screen.getByText(
+          (content, element) =>
+            element?.textContent === "Carolita - Toyota Corolla 2020"
+        )
       ).toBeInTheDocument();
       screen.getByText("Carolita - Toyota Corolla 2020").click();
       screen.getByLabelText("Vehicle *").blur();

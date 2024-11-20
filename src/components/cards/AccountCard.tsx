@@ -3,6 +3,7 @@
 import { components } from "@/api/schema";
 import { usePrefetchAccount } from "@/hooks/account";
 import {
+  Box,
   Button,
   Card,
   CardActions,
@@ -13,7 +14,9 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import AccountBalanceMiniChart from "../charts/AccountBalanceMiniChart";
 import UpdateAccountBalanceDialog from "../dialogs/UpdateAccountBalanceDialog";
+import AccountBalanceIndicator from "../indicators/AccountBalanceIndicator";
 
 type Account = components["schemas"]["AccountSchema"];
 
@@ -56,10 +59,18 @@ export default function AccountCard({ account }: { account: Account }) {
             subheader={account.account_number}
           />
           <CardContent>
-            <Typography variant="body1">{account.holder}</Typography>
-            <Typography variant="body2">
-              {account.currency} {formattedBalance}
+            <Typography variant="body1" sx={{ mb: 2 }}>
+              {account.holder}
             </Typography>
+            <Box
+              display="flex"
+              flexDirection="row"
+              justifyContent="space-between"
+              alignItems={"center"}
+            >
+              <AccountBalanceIndicator account={account} />
+              <AccountBalanceMiniChart accountId={account.id} tooltipText="" />
+            </Box>
           </CardContent>
           <CardActions>
             <Button
