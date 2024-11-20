@@ -2,6 +2,7 @@
 
 import { components } from "@/api/schema";
 import { usePrefetchAccount } from "@/hooks/account";
+import { maskAccountNumber } from "@/utils/account";
 import {
   Box,
   Button,
@@ -56,7 +57,7 @@ export default function AccountCard({ account }: { account: Account }) {
         >
           <CardHeader
             title={account.account_alias}
-            subheader={account.account_number}
+            subheader={maskAccountNumber(account.account_number)}
           />
           <CardContent>
             <Typography variant="body1" sx={{ mb: 2 }}>
@@ -68,7 +69,10 @@ export default function AccountCard({ account }: { account: Account }) {
               justifyContent="space-between"
               alignItems={"center"}
             >
-              <AccountBalanceIndicator account={account} />
+              <AccountBalanceIndicator
+                key={`account-card-balance-indicator-${account.id}`}
+                account={account}
+              />
               <AccountBalanceMiniChart accountId={account.id} tooltipText="" />
             </Box>
           </CardContent>

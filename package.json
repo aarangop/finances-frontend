@@ -24,6 +24,7 @@
     "@mui/material": "^5.16.6",
     "@mui/x-data-grid": "^7.14.0",
     "@mui/x-date-pickers": "^7.12.1",
+    "@react-spring/web": "^9.7.5",
     "@tanstack/react-query": "^5.51.18",
     "@tanstack/react-table": "^8.20.1",
     "@types/iban": "^0.0.35",

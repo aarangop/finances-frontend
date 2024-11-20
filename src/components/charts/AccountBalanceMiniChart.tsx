@@ -1,7 +1,7 @@
 import { components } from "@/api/schema";
 import { useGetAccountBalanceHistory } from "@/hooks/account";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
-import { Box, Skeleton, Tooltip } from "@mui/material";
+import { Box, Tooltip as MuiTooltip, Skeleton } from "@mui/material";
 import { Line, LineChart, ResponsiveContainer } from "recharts";
 
 type BalanceUpdate = components["schemas"]["BalanceUpdateSchema"];
@@ -49,15 +49,15 @@ export default function AccountBalanceMiniChart({
         alignItems="center"
         justifyContent="center"
       >
-        <Tooltip title="Failed to load chart data">
+        <MuiTooltip title="Failed to load chart data">
           <ErrorOutlineIcon color="error" />
-        </Tooltip>
+        </MuiTooltip>
       </Box>
     );
   }
 
   return (
-    <Tooltip title={tooltipText}>
+    <MuiTooltip title={tooltipText}>
       <Box
         height={50}
         width={120}
@@ -80,10 +80,13 @@ export default function AccountBalanceMiniChart({
               dataKey="balance"
               stroke="#8884d8"
               dot={false}
+              isAnimationActive={true}
+              animationDuration={800}
+              animationEasing="ease-in-out"
             />
           </LineChart>
         </ResponsiveContainer>
       </Box>
-    </Tooltip>
+    </MuiTooltip>
   );
 }

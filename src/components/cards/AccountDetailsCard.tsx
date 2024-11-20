@@ -1,6 +1,7 @@
 "use client";
 
 import { components } from "@/api/schema";
+import { maskAccountNumber } from "@/utils/account";
 import {
   Box,
   Button,
@@ -24,7 +25,6 @@ type Account = components["schemas"]["AccountSchema"];
 export default function AccountDetailsCard({ account }: { account: Account }) {
   const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [isUpdateDialogOpen, setUpdateDialogOpen] = useState(false);
-  const [timeFilter, setTimeFilter] = useState("1M"); // '1M', '6M', '1Y', 'ALL'
   const [isHistoryChartOpen, setIsHistoryChartOpen] = useState(false);
   const router = useRouter();
 
@@ -48,10 +48,6 @@ export default function AccountDetailsCard({ account }: { account: Account }) {
     setDeleteDialogOpen(false);
   };
 
-  const maskAccountNumber = (accountNumber: string) => {
-    return accountNumber.slice(-4).padStart(accountNumber.length, "*");
-  };
-
   return (
     <>
       <UpdateAccountBalanceDialog
@@ -72,21 +68,6 @@ export default function AccountDetailsCard({ account }: { account: Account }) {
       >
         <AccountBalanceHistoryChart account={account} />
       </Dialog>
-      <Box mb={2}>
-        <Grid container spacing={1}>
-          {["1M", "6M", "1Y", "ALL"].map((period) => (
-            <Grid item key={period}>
-              <Button
-                variant={timeFilter === period ? "contained" : "outlined"}
-                size="small"
-                onClick={() => setTimeFilter(period)}
-              >
-                {period}
-              </Button>
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
       <Card>
         <CardContent
           sx={{
@@ -118,7 +99,10 @@ export default function AccountDetailsCard({ account }: { account: Account }) {
                 <Typography variant="body1">{account.holder}</Typography>
 
                 <Box display="flex" alignItems="center" mt={2}>
-                  <AccountBalanceIndicator account={account} />
+                  <AccountBalanceIndicator
+                    key={`account-details-card-balance-indicator-${account.id}`}
+                    account={account}
+                  />
                   <Box mx={2}>
                     <AccountBalanceMiniChart
                       accountId={account.id}

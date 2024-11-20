@@ -109,10 +109,13 @@ export function useUpdateAccountBalance({
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["accounts"] });
-      queryClient.invalidateQueries({
-        queryKey: ["accounts", account.id, "balance-history"],
-      });
+      // Force refetch instead of just invalidating
+      Promise.all([
+        queryClient.refetchQueries({ queryKey: ["accounts"] }),
+        queryClient.refetchQueries({
+          queryKey: ["accounts", account.id, "balance-history"],
+        }),
+      ]);
       if (onSuccess) {
         onSuccess();
       }
@@ -275,6 +278,7 @@ export const useGetAccountBalanceHistory = (
           },
         }
       );
+      console.log("Fetched balance history for account", accountId);
       return response.data as BalanceUpdate[];
     },
   });

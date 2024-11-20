@@ -1,3 +1,5 @@
+"use client";
+
 import { components } from "@/api/schema";
 import { useGetAccountBalanceHistory } from "@/hooks/account";
 import { calculateBalanceTrend } from "@/utils/account";
@@ -11,6 +13,25 @@ interface BalanceChangeIndicatorProps {
   account: Account;
 }
 
+/**
+ * AccountBalanceIndicator component displays the balance and balance change trend for a given account.
+ * It uses animated springs to smoothly transition the displayed balance and percentage change.
+ *
+ * @param {BalanceChangeIndicatorProps} props - The properties for the component.
+ * @param {Account} props.account - The account object containing balance and currency information.
+ *
+ * @returns {JSX.Element | null} The rendered component or null if there are no balance updates.
+ *
+ * @example
+ * <AccountBalanceIndicator account={account} />
+ *
+ * @remarks
+ * This component fetches the account balance history using the `useGetAccountBalanceHistory` hook.
+ * It displays a loading skeleton while fetching data and an error message if the fetch fails.
+ * If there are no balance updates, it returns null.
+ *
+ * @component
+ */
 export default function AccountBalanceIndicator({
   account,
 }: BalanceChangeIndicatorProps) {
@@ -19,6 +40,10 @@ export default function AccountBalanceIndicator({
     isLoading,
     isError,
   } = useGetAccountBalanceHistory(account.id);
+
+  const balanceChange = balanceUpdates
+    ? calculateBalanceTrend(balanceUpdates)
+    : 0;
 
   if (isLoading) {
     return (
@@ -41,16 +66,14 @@ export default function AccountBalanceIndicator({
     return null;
   }
 
-  const balanceChange = calculateBalanceTrend(balanceUpdates);
-
   return (
-    <Box display="flex" alignItems="start" flexDirection="row" ml={1}>
+    <Box display="flex" alignItems="start" flexDirection="row">
       <Box>
         <Typography
-          variant="body1"
-          style={{ fontFamily: "monospace", fontWeight: "bold" }}
+          component="div"
+          sx={{ fontFamily: "monospace", fontWeight: "bold" }}
         >
-          {account.currency} {account.balance}
+          {account.balance.toFixed(2)}
         </Typography>
       </Box>
       <Box display="flex">
@@ -60,11 +83,15 @@ export default function AccountBalanceIndicator({
           <RemoveIcon sx={{ color: "error.main" }} />
         )}
         <Typography
-          variant="body1"
-          fontFamily="monospace"
-          color={balanceChange > 0 ? "success.main" : "error.main"}
+          component="div"
+          sx={{
+            fontFamily: "monospace",
+            color: balanceChange > 0 ? "#2e7d32" : "#d32f2f",
+          }}
         >
-          {Math.abs(balanceChange * 100).toFixed(1)}%
+          {`${(balanceChange < 0 ? -1 * balanceChange : balanceChange).toFixed(
+            1
+          )}%`}
         </Typography>
       </Box>
     </Box>
